@@ -7,7 +7,7 @@
 #
 # All other settings (tasks, repeats, grader, model, prompts) are held fixed.
 param(
-    [double]$Temperature = 1.0,
+    [double]$Temperature = 0.0,
     [string]$Label       = "baseline",
     [int]$Repeats        = 5
 )
