@@ -1,804 +1,511 @@
-<div align="center">
+# GenericAgent Reproduction — FTEC5660 Reproducibility Work
 
-<img src="assets/images/bar.jpg" width="880" alt="GenericAgent Banner"/>
+This repository is a **reproducibility study** of the open-source agent framework
+**GenericAgent** (*A Token-Efficient Self-Evolving LLM Agent via Contextual Information
+Density Maximization*). We run a subset of its `tool_efficiency_benchmark` on a local
+Windows machine with the **DeepSeek API**, and apply **one isolated, measurable
+modification**: changing the sampling temperature from `1.0` to `0.0`.
 
-# GenericAgent
+- Upstream framework: <https://github.com/lsdefine/GenericAgent> — this repo is a **fork**,
+  pinned at upstream `main` HEAD `68d996a4` (2026-11-06).
+- Benchmark / technical report source: <https://github.com/JinyiHan99/GA-Technical-Report>,
+  version `feb354a5` (2026-06-15).
+- Submission package for the course consists of three items: a ≤10-page brief report,
+  this GitHub link, and a ≤15-minute recorded Zoom presentation.
 
-**A Minimal, Self-Evolving Autonomous Agent Framework**
-
-*~3K lines of seed code · 9 atomic tools · ~100-line Agent Loop*
-
-<p>
-
-  <a href="https://gaagent.ai"><img src="https://img.shields.io/badge/Official_Website-gaagent.ai-00A67E?style=flat-square" alt="Official Website"/></a>
-  <a href="https://arxiv.org/abs/2604.17091"><img src="https://img.shields.io/badge/Technical_Report-PDF-EA4335?style=flat-square&logo=adobeacrobatreader&logoColor=white" alt="Technical Report"/></a>
-  <a href="https://github.com/JinyiHan99/GA-Technical-Report"><img src="https://img.shields.io/badge/Code_%26_Data-Reproduction-181717?style=flat-square&logo=github" alt="Reproduction Repo"/></a>
-  <a href="https://datawhalechina.github.io/hello-generic-agent/"><img src="https://img.shields.io/badge/Tutorial-Datawhale-blue?style=flat-square" alt="Tutorial"/></a>
-  <a href="https://fudankw.cn/sophub"><img src="https://img.shields.io/badge/Skill_Hub-Sophub-purple?style=flat-square" alt="Sophub"/></a>
-</p>
-
-<p>
-  <a href="https://trendshift.io/repositories/25944" target="_blank"><img src="https://trendshift.io/api/badge/repositories/25944" alt="Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
-</p>
-
-**[English](#-english) · [中文](#-中文)**
-
-</div>
-
-> 📌 **Official:** GitHub + https://gaagent.ai only. DintalClaw is the sole authorized commercial partner; others are not affiliated.
+> **Controlled-variable declaration (important).** The original report uses
+> Claude Sonnet 4.6, while this study switches to the publicly accessible
+> `deepseek-v4-pro` (DeepSeek V4 Pro, OpenAI-compatible interface). Model and
+> decoding parameters are controlled variables, so the success rates obtained
+> here **cannot be directly compared with the numbers reported in the paper**.
+> They are used to reproduce, under one fixed setup, the behaviour "can the task
+> be completed correctly", and to support an internal baseline-vs-modification
+> comparison.
 
 ---
 
-<a id="-english"></a>
+## 1. What is upstream and what is mine
 
-## 🌟 Overview
+This repository is a fork, so the **upstream framework lives directly at the
+repository root** (`agentmain.py`, `llmcore.py`, `ga.py`, `memory/`, `plugins/`,
+`docs/`, `frontends/`, …). There is **no `GenericAgent/` subdirectory** — do not
+upload one.
 
-**GenericAgent** is a minimal, self-evolving autonomous agent framework. Its core is just **~3K lines of code**. Through **9 atomic tools + a ~100-line Agent Loop**, it grants any LLM system-level control over a local computer — covering browser, terminal, filesystem, keyboard/mouse input, screen vision, and mobile devices (ADB).
+| Part | Origin | Status |
+|---|---|---|
+| Root-level framework files (`agentmain.py`, `llmcore.py`, `ga.py`, …) | `lsdefine/GenericAgent` @ `68d996a4` | Logic unchanged. DeepSeek support in `llmcore.py` is an upstream-native capability. |
+| `benchmark/tool_efficiency_benchmark/` | `JinyiHan99/GA-Technical-Report` @ `feb354a5` | Copied verbatim; the 16 official graders are never modified. |
+| `scripts/` | Mine | Reproduction driver, grader invocation, summarisation, diagnostics, report generation. |
+| `experiments/run_experiment.ps1` | Mine | One-command runner; the studied modification is a single default value here. |
+| `results/` | Mine | Measured outputs: baseline and temp0, 5 tasks × 5 trials each. |
+| Root `README.md`, `.gitignore` | Mine | Replaced README; .gitignore extended with an appended block (upstream rules preserved). |
 
-> Design philosophy — **don't preload skills, evolve them.**
-
-Every time GenericAgent solves a new task, it automatically crystallizes the execution path into a reusable **Skill**. The longer you use it, the more skills accumulate — forming a personal skill tree grown entirely from 3K lines of seed code.
-
-> 🤖 **Self-Bootstrap Proof** — Everything in this repository, from installing Git and running `git init` to every commit message, was completed autonomously by GenericAgent. The author never opened a terminal once.
-
-### 📑 Table of Contents
-
-- [Key Features](#-key-features)
-- [Demo Showcase](#-demo-showcase)
-- [Quick Start](#-quick-start)
-- [Usage](#-usage)
-- [Unlocking Advanced Capabilities](#-unlocking-advanced-capabilities)
-- [Architecture](#-architecture)
-- [Self-Evolution Mechanism](#-self-evolution-mechanism)
-- [Comparison](#-comparison)
-- [Evaluation](#-evaluation)
-- [Roadmap & News](#-roadmap--news)
-- [Community & Support](#-community--support)
-- [License](#-license)
+Only two upstream-derived assumptions were adapted for the fork layout, in
+`scripts/run_single.py` and `scripts/check_model.py`: the framework path constant
+changed from a `GenericAgent/` subdirectory to the repository root. **No
+experimental logic was changed.** The modification studied in this report is a
+runtime parameter change (sampling temperature), not a code edit to the framework.
 
 ---
 
-## 📋 Key Features
+## 2. Repository layout
 
-| Feature | Description |
-| :--- | :--- |
-| 🧬 **Self-Evolving** | Automatically crystallizes each task into a Skill. Capabilities grow with every use, forming your personal skill tree. |
-| 🪶 **Minimal Architecture** | ~3K lines of core code. Agent Loop is ~100 lines. No complex dependencies, zero deployment overhead. |
-| ⚡ **Strong Execution** | **TMWebdriver** injects into a real browser (preserving login sessions). 9 atomic tools take direct control of the system. |
-| 🔌 **High Compatibility** | Supports Claude / Gemini / Kimi / MiniMax and other major models. Cross-platform. |
-| 💰 **Token Efficient** | <30K context window — a fraction of the 200K–1M other agents consume. Less noise, fewer hallucinations, higher success rate, lower cost. |
-
----
-
-## 🎯 Demo Showcase
-
-<table>
-  <tr>
-    <td align="center" width="50%"><b>🛡️ Real-Browser CAPTCHA Survival</b></td>
-    <td align="center" width="50%"><b>🌐 Autonomous Web Exploration</b></td>
-  </tr>
-  <tr>
-    <td><img src="assets/demo/discord_hcaptcha_real_browser.gif" width="100%" alt="Discord hCaptcha passed in real browser"></td>
-    <td><img src="assets/demo/autonomous_explore.png" width="100%" alt="Web Exploration"></td>
-  </tr>
-  <tr>
-    <td><sub>While configuring a Discord bot, an hCaptcha <i>"Are you human?"</i> challenge pops up mid-task — GA's real browser session passes it and the task continues. See <a href="#browser-realness-of-ga-web-tools">Browser Realness</a>.</sub></td>
-    <td><sub>Autonomously browses and periodically summarizes web content.</sub></td>
-  </tr>
-  <tr>
-    <td align="center"><b>🧋 Food Delivery Order</b></td>
-    <td align="center"><b>📈 Quantitative Stock Screening</b></td>
-  </tr>
-  <tr>
-    <td><img src="assets/demo/order_tea.gif" width="100%" alt="Order Tea"></td>
-    <td><img src="assets/demo/selectstock.gif" width="100%" alt="Stock Selection"></td>
-  </tr>
-  <tr>
-    <td><sub><i>"Order me a milk tea"</i> — navigates the delivery app, selects items, completes checkout.</sub></td>
-    <td><sub><i>"Find GEM stocks with EXPMA golden cross, turnover &gt; 5%"</i> — quantitative screening.</sub></td>
-  </tr>
-  <tr>
-    <td align="center"><b>💰 Expense Tracking</b></td>
-    <td align="center"><b>💬 Batch Messaging</b></td>
-  </tr>
-  <tr>
-    <td><img src="assets/demo/alipay_expense.png" width="100%" alt="Alipay Expense"></td>
-    <td align="center"><img src="assets/demo/wechat_batch.png" width="65%" alt="WeChat Batch"></td>
-  </tr>
-  <tr>
-    <td><sub><i>"Find expenses over ¥2K in the last 3 months"</i> — drives Alipay via ADB.</sub></td>
-    <td><sub>Sends bulk WeChat messages, fully driving the WeChat client.</sub></td>
-  </tr>
-</table>
-
----
-
-## 🚀 Quick Start
-
-> ⚠️ **Python version**: use **Python 3.11 or 3.12**. **Do not** use Python 3.14 — it is incompatible with `pywebview` and a few other GA dependencies.
->
-> 📖 Detailed installation guide: **[installation.md](docs/installation.md)** · **[installation_zh.md（中文）](docs/installation_zh.md)**
-
-### For LLM Agents
-
-Fetch the installation guide and follow it:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/lsdefine/GenericAgent/refs/heads/main/docs/installation.md
+```
+<repo-root>/                       # fork of lsdefine/GenericAgent; root = upstream framework
+├─ agentmain.py, llmcore.py, ga.py, agent_loop.py, pyproject.toml, ...
+├─ memory/, plugins/, reflect/, frontends/, docs/, assets/   # upstream framework dirs
+├─ mykey_template.py              # upstream template; copy to mykey.py locally
+├─ benchmark/
+│  └─ tool_efficiency_benchmark/
+│     ├─ tool_efficiency_tasks.jsonl   # 16 task definitions
+│     ├─ graders/                      # 16 official auto-graders
+│     └─ assets/                       # input files per task_id
+├─ scripts/
+│  ├─ run_benchmark.py        # batch runner + official grader + summary
+│  ├─ run_single.py           # single-task driver (isolated workspace + monkeypatch)
+│  ├─ grade_windows.py        # grader invocation helper
+│  ├─ analyze_stability.py    # mean / variance across trials
+│  ├─ inspect_assets.py       # inspect reference answers of input assets
+│  ├─ check_model.py          # check model config / import
+│  ├─ diagnose_platform.py    # platform diagnostics
+│  └─ build_report.py         # generate the brief report (.docx)
+├─ experiments/
+│  └─ run_experiment.ps1      # one-command runner; the modification lives here
+├─ results/
+│  ├─ baseline/               # temperature 1.0, 5 tasks × 5 trials
+│  ├─ temp0/                  # temperature 0.0, 5 tasks × 5 trials
+│  └─ stability_analysis.json # per-task mean / variance comparison
+├─ workspaces/                # isolated per-task execution dir (gitignored)
+├─ .venv/                     # virtual environment (gitignored)
+├─ deepseek_key.txt           # local key file (gitignored, never committed)
+└─ .gitignore                 # upstream rules + appended reproduction rules
 ```
 
-### For Humans
+---
 
-#### Method 1 — Clone & install *(recommended)*
+## 3. Environment
 
-```bash
-git clone https://github.com/lsdefine/GenericAgent.git && cd GenericAgent
-uv venv && uv pip install -e ".[ui]"
-cp mykey_template_en.py mykey.py   # fill in your LLM API key
-```
+- Windows + Python `>=3.10,<3.14` (this project used Python 3.13)
+- A DeepSeek API key (OpenAI-compatible endpoint)
+- No Docker / conda / separate upstream checkout required — `git clone` this repo is enough
 
-Dependencies are deliberately tiered: the agent core needs only `requests`, plus four lightweight packages (`beautifulsoup4`, `bottle`, `simple-websocket-server`, `aiohttp`) for TMWebdriver's local server. The `[ui]` extra pulls in frontend libraries (Streamlit, `prompt_toolkit`/`rich` for the TUI, …) — install it for the bundled UIs, or skip it entirely and drive the agent headless. No Playwright, no LangChain, no browser binaries to download.
+Main dependencies: `requests`, `beautifulsoup4`, `bottle`, `simple-websocket-server`,
+`aiohttp`, `pandas`, `openpyxl`, `nbformat`, `numpy`.
 
-Then launch:
+---
 
-```bash
-python frontends/tui_v3.py   # Terminal UI (recommended)
-python launch.pyw            # Streamlit web UI
-```
+## 4. Installation & configuration
 
-#### Method 2 — One-line installer *(convenience)*
-
-Sets up a self-contained directory with an isolated Python environment, Git, and a ready-to-run package. The script is in [`assets/`](assets/) if you'd like to read it first.
-
-**Windows PowerShell**
+Run all commands from the **repository root**.
 
 ```powershell
-powershell -ExecutionPolicy Bypass -c "$env:GLOBAL=1; irm https://raw.githubusercontent.com/lsdefine/GenericAgent/main/assets/ga_install.ps1 | iex"
+# 1) Create and activate the virtual environment
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+
+# 2) Install dependencies
+pip install requests beautifulsoup4 bottle simple-websocket-server aiohttp pandas openpyxl nbformat numpy
+
+# 3) Create the local model config from the upstream template
+#    mykey.py is gitignored but required at runtime:
+Copy-Item mykey_template.py mykey.py
+
+# 4) Configure the DeepSeek key
+#    Create deepseek_key.txt locally with one line:
+#    DEEPSEEK_API_KEY=sk-your-real-key
+#    (The environment variable DEEPSEEK_API_KEY takes higher priority.)
 ```
 
-**Linux / macOS**
-
-```bash
-GLOBAL=1 bash -c "$(curl -fsSL https://raw.githubusercontent.com/lsdefine/GenericAgent/main/assets/ga_install.sh)"
-```
-
-> 💡 GenericAgent grows its environment **through the Agent itself** — don't pre-install everything. See [Unlocking Advanced Capabilities](#-unlocking-advanced-capabilities) below.
+`deepseek_key.txt`, `mykey.py`, `.env`, `.venv/`, `workspaces/` and `temp/`
+are all ignored by `.gitignore` and are not part of this repository.
 
 ---
 
-## 💻 Usage
+## 5. Running the experiments
 
-### Frontends
-
-#### Terminal UI *(recommended)*
-
-A lightweight, scrollback-first terminal interface built on `prompt_toolkit` + `rich`. Supports multiple concurrent sessions and real-time streaming.
-
-```bash
-python frontends/tui_v3.py
-```
-
-<details>
-<summary><b>⚠️ Windows TUI Troubleshooting</b></summary>
-
-TUI rendering on Windows can be flaky depending on terminal + font. Common causes:
-
-1. `prompt_toolkit` / `rich` are not on the latest version — `pip install -U prompt_toolkit rich` first.
-2. PowerShell / cmd ship with terminals that have rough Unicode + key-binding support. **Prefer Git Bash on Windows**, which is much better behaved.
-3. If it still looks broken, ask GA itself to fix it:
-   > *"My experience using `frontends/tui_v3.py` in PowerShell / cmd / Git Bash on Windows is very poor — lots of incompatibility. Please refer to Claude Code's best practices for the Windows terminal and fix all font and rendering incompatibilities."*
-
-</details>
-
-#### Streamlit UI
-
-```bash
-python launch.pyw
-```
-
-### Bot Interface (IM)
-
-GenericAgent also supports IM frontends such as Telegram, Discord, and Lark.
-
-| Platform | Command |
-| :--- | :--- |
-| Telegram | `python frontends/tgapp.py` |
-| Discord | `python frontends/dcapp.py` |
-| Lark / Feishu | `python frontends/fsapp.py` |
-
-> WeChat, QQ, WeCom and DingTalk are also supported — see the Chinese section below.
-> For detailed setup, ask GenericAgent itself.
-
----
-
-## 🔓 Unlocking Advanced Capabilities
-
-In GA, advanced capabilities are unlocked by **instructing the agent**, not by reading
-docs or installing extras. Each instruction below makes GA read its pre-installed SOPs
-(battle-tested playbooks in its memory), install whatever is missing, adapt to your OS,
-and persist the result into its own memory.
-
-| Capability | Just tell GA |
-| :--- | :--- |
-| 🌐 Web automation | *"Set up your web automation capability."* — GA guides you through the one manual step: dragging the bundled Chrome extension into `chrome://extensions`. |
-| 🔤 OCR | *"Set up your OCR capability with rapidocr and save it to memory."* |
-| 👁️ Vision | *"Set up your vision capability from the template in memory/."* — GA copies the template, wires it to your existing LLM keys, and self-tests. |
-| 🖱️ Computer use | *"Probe this system and set up your computer-use capability."* |
-
-> 💡 **About language**: the pre-installed SOPs are written in Chinese — GA reads them
-> natively, so this never blocks you. If you prefer an English knowledge base, just say:
-> *"Read your pre-installed SOPs and rewrite them in English (keep code, paths and error
-> strings verbatim)."*
->
-> 🌍 **About platforms**: the SOPs were honed on Windows, but cross-platform adaptation is
-> itself a GA task — on macOS/Linux, GA swaps in the platform equivalents (window
-> enumeration, input control, screenshots) on its own. Same self-evolution principle.
-
----
-
-## 🧠 Architecture
-
-GenericAgent accomplishes complex tasks through **Layered Memory × Minimal Toolset × Autonomous Execution Loop**, continuously accumulating experience during execution.
-
-### 1️⃣ Layered Memory System
-
-> *Memory crystallizes throughout task execution, letting the agent build stable, efficient working patterns over time.*
-
-| Layer | Name | Description |
-| :---: | :--- | :--- |
-| **L0** | Meta Rules | Core behavioral rules and system constraints |
-| **L1** | Insight Index | Minimal memory index for fast routing and recall |
-| **L2** | Global Facts | Stable knowledge accumulated over long-term operation |
-| **L3** | Task Skills / SOPs | Reusable workflows for completing specific task types |
-| **L4** | Session Archive | Archived task records distilled from finished sessions for long-horizon recall |
-
-### 2️⃣ Autonomous Execution Loop
-
-> *Perceive environment state → Task reasoning → Execute tools → Write experience to memory → Loop*
-
-The entire core loop is just **~100 lines of code** ([`agent_loop.py`](agent_loop.py)).
-
-### 3️⃣ Minimal Toolset
-
-> *GenericAgent provides only **9 atomic tools**, forming the foundational capabilities for interacting with the outside world.*
-
-| Tool | Function |
-| :--- | :--- |
-| `code_run` | Execute arbitrary code (Python / PowerShell) |
-| `file_read` | Read files |
-| `file_write` | Write / create / overwrite files |
-| `file_patch` | Patch / modify files |
-| `web_scan` | Perceive web content |
-| `web_execute_js` | Control browser behavior |
-| `ask_user` | Human-in-the-loop confirmation |
-| `update_working_checkpoint` | *(memory)* Short-term working notepad |
-| `start_long_term_update` | *(memory)* Distill long-term memory |
-
-### 4️⃣ Capability Extension
-
-> *Capable of dynamically creating new tools.*
-
-Via `code_run`, GenericAgent can dynamically install Python packages, write new scripts, call external APIs, or control hardware at runtime — crystallizing temporary abilities into permanent tools.
-
-<div align="center">
-  <img src="assets/images/workflow.jpg" alt="GenericAgent Workflow" width="420"/>
-  <br/><em>GenericAgent Workflow Diagram</em>
-</div>
-
----
-
-## 🧬 Self-Evolution Mechanism
-
-This is what fundamentally distinguishes GenericAgent from every other agent framework.
-
-```text
-[New Task]
-   │
-   ▼
-[Autonomous Exploration]   ─►  install deps · write scripts · debug · verify
-   │
-   ▼
-[Crystallize into Skill]   ─►  write to memory layer
-   │
-   ▼
-[Direct Recall on Next Similar Task]
-```
-
-| What you say | First time | Every time after |
-| :--- | :--- | :--- |
-| *"Read my WeChat messages"* | Install deps → reverse DB → write read script → save Skill | **one-line invoke** |
-| *"Give me a morning digest of Hacker News"* | Write scraper → build digest → schedule daily run → save Skill | **one-line invoke** |
-| *"Monitor stocks and alert me"* | Install `mootdx` → build selection flow → configure cron → save Skill | **one-line start** |
-| *"Send this file via Gmail"* | Configure OAuth → write send script → save Skill | **ready to use** |
-
-After a few weeks, your agent instance will have a skill tree no one else in the world has — all grown from 3K lines of seed code.
-
----
-
-## 📊 Comparison
-
-| Feature | **GenericAgent** | OpenClaw | Claude Code |
-| :--- | :---: | :---: | :---: |
-| **Codebase** | ~3K lines | ~530,000 lines | Open-sourced (large) |
-| **Deployment** | `pip install` + API Key | Multi-service orchestration | CLI + subscription |
-| **Browser Control** | Real browser (session preserved) | Sandbox / headless browser | Via MCP plugin |
-| **OS Control** | Mouse/kbd, vision, ADB | Multi-agent delegation | File + terminal |
-| **Self-Evolution** | Autonomous skill growth | Plugin ecosystem | Stateless between sessions |
-| **Out of the Box** | Few core files + starter skills | Hundreds of modules | Rich CLI toolset |
-
----
-
-## 📈 Evaluation
-
-> 📂 Full evaluation datasets and results: [**JinyiHan99/GA-Technical-Report**](https://github.com/JinyiHan99/GA-Technical-Report/tree/main)
-
-We evaluate GenericAgent across **five dimensions**:
-
-| # | Dimension | Question | Benchmarks |
-| :---: | :--- | :--- | :--- |
-| 1 | **Task Completion & Token Efficiency** | Can GA complete hard tasks more cheaply than leading agents? | SOP-Bench, Lifelong AgentBench, RealFin-Benchmark |
-| 2 | **Tool-Use Efficiency** | Can a minimal atomic toolset solve what specialized toolsets solve, with less overhead? | Tool Efficiency Benchmark (11 simple + 5 long-horizon) |
-| 3 | **Memory System Effectiveness** | Does condensed hierarchical memory beat full/redundant memory and embedding-based retrievers? | SOP-Bench (dangerous goods), LoCoMo, 20-skill stress test |
-| 4 | **Self-Evolution Capability** | Can the agent distill experience into reusable SOPs and code, without intervention? | 9-round LangChain longitudinal study, 8-task cross-task web benchmark |
-| 5 | **Web Browsing Capability** | Does density-driven design survive the open web? | WebCanvas, BrowseComp-ZH, Custom Tasks (22) |
-
-Baselines across these dimensions include **Claude Code**, **OpenAI CodeX**, and **OpenClaw**, evaluated under *Claude Sonnet 4.6*, *Claude Opus 4.6*, *GPT-5.4*, and *MiniMax M2.7* backbones.
-
-<table>
-  <tr>
-    <td align="center" width="50%">
-      <img src="assets/images/result_radar.png" width="100%" alt="Tool-use efficiency radar"/><br/>
-      <sub><b>Tool-use efficiency radar.</b> GA dominates token, request, and tool-call axes while preserving quality across four task dimensions.</sub>
-    </td>
-    <td align="center" width="50%">
-      <img src="assets/images/result_convergence.png" width="100%" alt="Cross-task self-evolution convergence"/><br/>
-      <sub><b>Cross-task self-evolution.</b> Second- and third-run GA executions converge to a stable low-cost regime across eight web tasks, while OpenClaw shows no such convergence.</sub>
-    </td>
-  </tr>
-</table>
-
-### Browser Realness of GA Web Tools (TMWebdriver)
-
-GA web tools are powered by **TMWebdriver** — a local WebSocket server plus a Chrome extension — running through a **real, persistent Chrome/Chromium session** rather than a disposable headless sandbox, preserving cookies, login state, extensions, GPU/WebGL behavior, and normal browser-session fingerprints.
-
-| Detection Service / Signal | Vanilla Headless Automation | GA Web Tools | Notes |
-| :--- | :---: | :---: | :--- |
-| SannySoft headless test | Often detected | ✅ 56/56 passed | `bot.sannysoft.com` |
-| bot.incolumitas.com | Commonly fails webdriver / CDP checks | ✅ 36/36 passed | `WEBDRIVER`, `SELENIUM_DRIVER`, `webDriverAdvanced` all OK |
-| BrowserScan bot detection | Often abnormal | ✅ Normal | `browserscan.net` |
-| Device & Browser Info bot test | Multiple bot flags | ✅ Human / `isBot=false` | `deviceandbrowserinfo.com` |
-| FingerprintJS bot detection demo | Often detected | ✅ Passed | Demo flow completed without bot verdict |
-| reCAPTCHA v3 demo | Low bot-like score | ✅ 0.9 human-like score | Score-based risk signal; 0.9 is above typical production thresholds |
-
-For reCAPTCHA v3, `0.9` is not a "checkbox solved" result; it is the high-confidence human-like score returned by the risk model, typically sufficient to avoid extra challenges in production flows.
-
----
-
-## 📅 Roadmap & News
-
-- **2026-05-23** — 🆕 **TUI v3 released** (`frontends/tui_v3.py`). Block-based scrollback with proper resize reflow, per-terminal color profile for cross-terminal parity, and feature parity with v2.
-- **2026-05-18** — 🆕 **Morphling mode**. Project-level skill absorption — extract goal + tests from any external repo, then decide per component: call, rewrite, or discard. See `memory/morphling_sop.md`.
-- **2026-05-17** — 🆕 **Goal Hive mode**. Multi-worker cooperative Goal mode — BBS-coordinated master/workers running long-horizon objectives in parallel. See `memory/goal_hive_sop.md`.
-- **2026-05-15** — 🖥️ **Desktop GUI released**. One-line installs ship a ready-to-run desktop app (`frontends/GenericAgent.exe`). Developers launch via `python launch.pyw`.
-- **2026-05-14** — 🆕 **Conductor sub-agent orchestration**. Spawn, supervise, and auto-clean parallel sub-agents; first-class delegation primitives complementing `/btw` side-questions.
-- **2026-05-12** — 🆕 **TUI v2 released** (`frontends/tuiapp_v2.py`). Refined Textual frontend with image-paste folding, file paste, block-delete, Ctrl+C copy, history navigation, and `/llm` / `/export` / `/continue` pickers.
-- **2026-05-08** — 🆕 **Goal mode** (`reflect/goal_mode.py`). Time-budget-driven self-driven loop — "keep optimizing X for N hours" with no premature delivery.
-- **2026-04-21** — 📄 [**Technical Report on arXiv**](https://arxiv.org/abs/2604.17091) — *GenericAgent: A Token-Efficient Self-Evolving LLM Agent via Contextual Information Density Maximization*.
-- **2026-04-11** — Introduced **L4 session archive memory** and scheduler cron integration.
-- **2026-03-23** — Personal WeChat supported as a bot frontend.
-- **2026-03-10** — [Released million-scale Skill Library](https://mp.weixin.qq.com/s/q2gQ7YvWoiAcwxzaiwpuiQ?scene=1&click_id=7) *(Chinese)*.
-- **2026-03-08** — [Released "Dintal Claw" — a GenericAgent-powered government-affairs bot](https://mp.weixin.qq.com/s/eiEhwo-j6S-WpLxgBnNxBg) *(Chinese)*.
-- **2026-03-01** — [Featured by Jiqizhixin (机器之心)](https://mp.weixin.qq.com/s/uVWpTTF5I1yzAENV_qm7yg) *(Chinese)*.
-- **2026-01-16** — GenericAgent **V1.0** public release.
-
----
-
-## ⭐ Community & Support
-
-If this project helped you, please consider leaving a **Star!** 🙏
-
-### 🚩 Friendly Links
-
-Thanks to the **LinuxDo** community for the support!
-
-[![LinuxDo](https://img.shields.io/badge/Community-LinuxDo-blue?style=for-the-badge)](https://linux.do/)
-
-**Community GUIs** *(independent open-source projects)*:
-
-- [chilishark27/ga-manager](https://github.com/chilishark27/ga-manager)
-- [wangjc683/galley](https://github.com/wangjc683/galley) — Out-of-the-box local agent workbench with a bundled GA runtime (CPython 3.11 + deps), native GUI/CLI, multi-session + Project orchestration, local-first.
-- [FroStorM/A3Agent](https://github.com/FroStorM/A3Agent/tree/workbench)
-- [Fwind43/GenericAgent-Admin](https://github.com/Fwind43/GenericAgent-Admin) — Go + React desktop admin panel: service lifecycle management, native chat, Goal mode, BBS team board, file editor, model config wizard, TMWebDriver monitor, self-update, and Windows tray/desktop-pet integration.
-
----
-
-## 📄 License
-
-Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for full text.
-
-> *Disclaimer: The official GenericAgent channels are this GitHub repository and https://gaagent.ai. DintalClaw is currently the only officially authorized commercial partner; any other third-party website, organization, or individual using the GenericAgent name is not official unless explicitly listed here.*
-
----
-
-<a id="-中文"></a>
-
-## 🌟 项目简介
-
-**GenericAgent** 是一个极简、可自我进化的自主 Agent 框架。核心仅 **~3K 行代码**，通过 **9 个原子工具 + ~100 行 Agent Loop**，赋予任意 LLM 对本地计算机的系统级控制能力，覆盖浏览器、终端、文件系统、键鼠输入、屏幕视觉及移动设备（ADB）。
-
-> 设计哲学 —— **不预设技能，靠进化获得能力。**
-
-每解决一个新任务，GenericAgent 就将执行路径自动固化为 Skill，供后续直接调用。使用时间越长，沉淀的技能越多，形成一棵完全属于你、从 3K 行种子代码生长出来的专属技能树。
-
-> 🤖 **自举实证** — 本仓库的一切，从安装 Git、`git init` 到每一条 commit message，均由 GenericAgent 自主完成。作者全程未打开过一次终端。
-
-### 📑 目录
-
-- [核心特性](#-核心特性)
-- [实例展示](#-实例展示)
-- [快速开始](#-快速开始)
-- [使用方式](#-使用方式)
-- [架构设计](#-架构设计)
-- [自我进化机制](#-自我进化机制)
-- [与同类产品对比](#-与同类产品对比)
-- [评测](#-评测)
-- [路线图与最新动态](#-路线图与最新动态)
-- [社区与支持](#-社区与支持)
-- [许可](#-许可)
-
----
-
-## 📋 核心特性
-
-| 特性 | 说明 |
-| :--- | :--- |
-| 🧬 **自我进化** | 每次任务自动沉淀 Skill，能力随使用持续增长，形成专属技能树 |
-| 🪶 **极简架构** | ~3K 行核心代码，Agent Loop 约百行，无复杂依赖，部署零负担 |
-| ⚡ **强执行力** | 注入真实浏览器（保留登录态），9 个原子工具直接接管系统 |
-| 🔌 **高兼容性** | 支持 Claude / Gemini / Kimi / MiniMax 等主流模型，跨平台运行 |
-| 💰 **极致省 Token** | 上下文窗口不到 30K，是其他 Agent（200K–1M）的零头；噪声更少、幻觉更低、成功率更高，成本低一个数量级 |
-
----
-
-## 🎯 实例展示
-
-<table>
-  <tr>
-    <td align="center" width="50%"><b>🧋 外卖下单</b></td>
-    <td align="center" width="50%"><b>📈 量化选股</b></td>
-  </tr>
-  <tr>
-    <td><img src="assets/demo/order_tea.gif" width="100%" alt="外卖下单"></td>
-    <td><img src="assets/demo/selectstock.gif" width="100%" alt="量化选股"></td>
-  </tr>
-  <tr>
-    <td><sub><i>"Order me a milk tea"</i> — 自动导航外卖 App，选品并完成结账</sub></td>
-    <td><sub><i>"Find GEM stocks with EXPMA golden cross, turnover &gt; 5%"</i> — 量化条件筛股</sub></td>
-  </tr>
-  <tr>
-    <td align="center"><b>🌐 自主网页探索</b></td>
-    <td align="center"><b>💰 支出追踪</b></td>
-  </tr>
-  <tr>
-    <td><img src="assets/demo/autonomous_explore.png" width="100%" alt="网页探索"></td>
-    <td><img src="assets/demo/alipay_expense.png" width="100%" alt="支付宝支出"></td>
-  </tr>
-  <tr>
-    <td><sub>自主浏览并定时汇总网页信息</sub></td>
-    <td><sub><i>"查找近 3 个月超 ¥2K 的支出"</i> — 通过 ADB 驱动支付宝</sub></td>
-  </tr>
-  <tr>
-    <td align="center" colspan="2"><b>💬 批量消息</b></td>
-  </tr>
-  <tr>
-    <td colspan="2" align="center"><img src="assets/demo/wechat_batch.png" width="50%" alt="微信批量"></td>
-  </tr>
-  <tr>
-    <td colspan="2"><sub>批量发送微信消息，完整驱动微信客户端</sub></td>
-  </tr>
-</table>
-
----
-
-## 🚀 快速开始
-
-> ⚠️ **Python 版本：** 推荐使用 **Python 3.11 或 3.12**。**请不要使用 Python 3.14**，与 `pywebview` 及部分依赖不兼容。
->
-> 📖 详细安装指南：**[installation_zh.md（中文）](docs/installation_zh.md)** · **[installation.md (English)](docs/installation.md)**
-
-### 给 LLM Agent 看的
-
-获取安装指南并照做：
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/lsdefine/GenericAgent/refs/heads/main/docs/installation_zh.md
-```
-
-### 给人类用户看的
-
-#### 方法一 — 一键安装 *（推荐）*
-
-一键安装会自动准备独立 Python 环境、Git、项目文件和桌面端，不污染系统环境。
-
-**Windows PowerShell**
+### 5.1 Baseline (temperature = 1.0)
 
 ```powershell
-powershell -ExecutionPolicy Bypass -c "irm http://fudankw.cn:9000/files/ga_install.ps1 | iex"
+powershell -ExecutionPolicy Bypass -File .\experiments\run_experiment.ps1 `
+  -Label baseline -Temperature 1.0 -Repeats 5
 ```
 
-**Linux / macOS**
+### 5.2 Modification (temperature = 0.0)
 
-```bash
-curl -fsSL http://fudankw.cn:9000/files/ga_install.sh | bash
+```powershell
+powershell -ExecutionPolicy Bypass -File .\experiments\run_experiment.ps1 `
+  -Label temp0 -Repeats 5
 ```
 
-安装完成后启动：
+No `-Temperature` argument is needed for temp0: after the modification commit the
+script's default is `0.0`. Every other condition — tasks, repeats, grader, model,
+prompts, decoding settings — is held fixed.
 
-- **Windows** — 双击 `frontends/GenericAgent.exe`
-- **Linux / macOS** — 在安装目录运行 `python launch.pyw`
+Equivalent low-level commands:
 
-#### 方法二 — Python 安装 *（开发者）*
+```powershell
+.venv\Scripts\python.exe scripts\run_benchmark.py --label baseline `
+  --tasks teb_01,teb_02,teb_06,teb_07,teb_08 --repeats 5 --temperature 1.0
 
-```bash
-git clone https://github.com/lsdefine/GenericAgent.git
-cd GenericAgent
-uv venv
-uv pip install -e ".[ui]"          # 核心 + UI 依赖
-cp mykey_template.py mykey.py      # 填入你的 LLM API Key
-python launch.pyw
+.venv\Scripts\python.exe scripts\run_benchmark.py --label temp0 `
+  --tasks teb_01,teb_02,teb_06,teb_07,teb_08 --repeats 5 --temperature 0.0
 ```
 
-> 💡 GenericAgent 更推荐由 **Agent 在使用中自举环境**，而不是预先手动装完整依赖。
+Other helpers:
 
-📖 完整引导流程见 [`docs/GETTING_STARTED.md`](docs/GETTING_STARTED.md)
-📖 新手图文版：[飞书文档](https://my.feishu.cn/wiki/CGrDw0T76iNFuskmwxdcWrpinPb)
-📘 完整入门教程（Datawhale 出品）：[Hello GenericAgent](https://datawhalechina.github.io/hello-generic-agent/) · [GitHub](https://github.com/datawhalechina/hello-generic-agent)
-
----
-
-## 💻 使用方式
-
-### 前端启动
-
-#### 桌面端
-
-一键安装自带桌面端（Windows），双击：
-
-```text
-frontends/GenericAgent.exe
+```powershell
+.venv\Scripts\python.exe scripts\inspect_assets.py      # view reference answers
+.venv\Scripts\python.exe scripts\analyze_stability.py   # rebuild stability_analysis.json
 ```
 
-#### 终端 UI
+The committed `results/` already contains **5 tasks × 5 trials × 2 conditions = 50
+runs**, so mean and variance can be reported without re-running anything.
 
-基于 [Textual](https://github.com/Textualize/textual) 的轻量键盘驱动界面。支持多会话并发、实时流式输出，有终端就能跑。
+---
 
-```bash
-python frontends/tuiapp_v2.py
+## 6. The modification (isolated, measurable)
+
+| | baseline | modification |
+|---|---|---|
+| sampling temperature | `1.0` | **`0.0`** |
+| tasks | `teb_01, teb_02, teb_06, teb_07, teb_08` | identical |
+| repeats | 5 | identical |
+| grader | official, unmodified | identical |
+| model / prompts | `deepseek-v4-pro`, unchanged | identical |
+
+The change appears in commit
+`feat(modification): sampling temperature 1.0 -> 0.0 (isolated change)` as a
+**one-line diff** in `experiments/run_experiment.ps1`. It is a parameter change
+permitted by the assignment; the upstream framework code is not modified.
+
+Because the underlying LLM differs from the paper, this is an internal
+before/after comparison only — see the controlled-variable declaration above.
+
+---
+
+## 7. Scoring method
+
+After each run, `scripts/run_benchmark.py` invokes the corresponding **official
+grader**:
+
+```
+python <grader>.py --workspace <workspace> --response-file <response>
 ```
 
-<details>
-<summary><b>⚠️ Windows 上 TUI 显示异常的排查思路</b></summary>
+The grader emits one line of JSON containing `task_success` (boolean). Some tasks
+(`teb_01/02/06`) use `rglob` to inspect **real files** in the workspace, so input
+assets are fully copied into each isolated workspace first. Aggregated results
+are written to `results/<label>/summary.json` and `summary.csv`, including success
+rate, elapsed time, and token usage. `results/<label>/grade_windows.json` holds
+the grader invocation records. The graders themselves are never edited.
 
-1. `textual` 版本太旧，先 `pip install -U textual`；
-2. PowerShell / cmd 自带终端对 Unicode 和键位的支持比较糟糕，**Windows 上推荐用 Git Bash**，体验明显更稳；
-3. 仍然显示异常时，可以让 GA 自己修一遍，参考 Prompt：
-   > *"我在 Windows 的 PowerShell / cmd / Git Bash 中使用 `frontends/tuiapp_v2.py` 体验非常差，出现了一堆不兼容问题。请参考 Claude Code 在 Windows 终端的最佳配置，把所有字体和显示不兼容的问题修一遍。"*
+---
 
-</details>
+## 8. Reproduced tasks (5 offline deterministic tasks)
 
-#### Streamlit UI
+| Task | Capability tested | Type |
+|---|---|---|
+| teb_01_glob_markdown_list | List all `.md` files (Glob) | Read-only |
+| teb_02_grep_todo_hits | Find all `TODO` hits (Grep) | Read-only |
+| teb_06_notebook_inspect | Insert a code cell into a Jupyter notebook | File modification |
+| teb_07_csv_stats | CSV row count / header / numeric statistics | Read-only |
+| teb_08_xlsx_budget_extract | Excel worksheet and amount reading | Read-only |
 
-```bash
-python launch.pyw
+`teb_03/05`, which depend on live webpages, and the long-horizon complex tasks
+`teb_12–16` are deliberately excluded to keep the results deterministic and
+reproducible within a limited time and compute budget.
+
+---
+
+## 9. Results layout
+
+```
+results/
+├─ baseline/<task_id>/r1..r5/{prompt.txt, response.txt, stats.json}
+├─ temp0/<task_id>/r1..r5/{prompt.txt, response.txt, stats.json}
+├─ baseline/{summary.json, summary.csv, grade_windows.json}
+├─ temp0/{summary.json, summary.csv, grade_windows.json}
+└─ stability_analysis.json     # mean / variance per task and per condition
 ```
 
-### Bot 接口（IM）
-
-GenericAgent 支持 Telegram、Discord、微信、QQ、飞书 / Lark、企业微信、钉钉等 IM 前端。
-
-| 平台 | 启动命令 |
-| :--- | :--- |
-| Telegram | `python frontends/tgapp.py` |
-| Discord | `python frontends/dcapp.py` |
-| 微信 | `python frontends/wechatapp.py` |
-| QQ | `python frontends/qqapp.py` |
-| 飞书 / Lark | `python frontends/fsapp.py` |
-| 企业微信 | `python frontends/wecomapp.py` |
-| 钉钉 | `python frontends/dingtalkapp.py` |
-
-> 详细配置直接问 GenericAgent。
+Start with `results/stability_analysis.json` for the aggregate comparison, then
+the two `summary.csv` files for per-task numbers.
 
 ---
 
-## 🧠 架构设计
+## 10. Security notes
 
-GenericAgent 通过 **分层记忆 × 最小工具集 × 自主执行循环** 完成复杂任务，并在执行过程中持续积累经验。
-
-### 1️⃣ 分层记忆系统
-
-> *记忆在任务执行过程中持续沉淀，使 Agent 逐步形成稳定且高效的工作方式。*
-
-| 层级 | 名称 | 说明 |
-| :---: | :--- | :--- |
-| **L0** | 元规则（Meta Rules） | Agent 的基础行为规则和系统约束 |
-| **L1** | 记忆索引（Insight Index） | 极简索引层，用于快速路由与召回 |
-| **L2** | 全局事实（Global Facts） | 在长期运行过程中积累的稳定知识 |
-| **L3** | 任务 Skills / SOPs | 完成特定任务类型的可复用流程 |
-| **L4** | 会话归档（Session Archive） | 从已完成任务中提炼出的归档记录，用于长程召回 |
-
-### 2️⃣ 自主执行循环
-
-> *感知环境状态 → 任务推理 → 调用工具执行 → 经验写入记忆 → 循环*
-
-整个核心循环仅 **约百行代码**（[`agent_loop.py`](agent_loop.py)）。
-
-### 3️⃣ 最小工具集
-
-> *GenericAgent 仅提供 **9 个原子工具**，构成与外部世界交互的基础能力。*
-
-| 工具 | 功能 |
-| :--- | :--- |
-| `code_run` | 执行任意代码（Python / PowerShell） |
-| `file_read` | 读取文件 |
-| `file_write` | 写入 / 创建 / 覆盖文件 |
-| `file_patch` | 修改文件 |
-| `web_scan` | 感知网页内容 |
-| `web_execute_js` | 控制浏览器行为 |
-| `ask_user` | 人机协作确认 |
-| `update_working_checkpoint` | *（记忆）* 短期工作记事板 |
-| `start_long_term_update` | *（记忆）* 提炼长期记忆 |
-
-### 4️⃣ 能力扩展机制
-
-> *具备动态创建新工具的能力。*
-
-通过 `code_run`，GenericAgent 可在运行时动态安装 Python 包、编写新脚本、调用外部 API 或控制硬件，将临时能力固化为永久工具。
-
-<div align="center">
-  <img src="assets/images/workflow.jpg" alt="GenericAgent 工作流程" width="420"/>
-  <br/><em>GenericAgent 工作流程图</em>
-</div>
+- The key exists only in the local `deepseek_key.txt` (or the
+  `DEEPSEEK_API_KEY` environment variable). That file and `mykey.py` are ignored
+  and never committed.
+- Each task runs in an independent subprocess with an isolated workspace; the
+  agent does not modify upstream code and does not access files outside the
+  project directory.
+- Runtime artifacts (`workspaces/`, `temp/`, `.venv/`) are excluded from git.
 
 ---
 
-## 🧬 自我进化机制
+## 11. Commit map (for reviewers)
 
-这是 GenericAgent 区别于其他 Agent 框架的根本所在。
+This fork is a small number of reviewable commits on top of upstream `main`;
+there is no bulk vendor dump:
 
-```text
-[遇到新任务]
-    │
-    ▼
-[自主摸索]   ─►  安装依赖 · 编写脚本 · 调试验证
-    │
-    ▼
-[执行路径固化为 Skill]   ─►  写入记忆层
-    │
-    ▼
-[下次同类任务直接调用]
+| # | Commit | Content |
+|---|---|---|
+| 1 | `docs: replace upstream README with FTEC5660 reproduction guide` | this file |
+| 2 | `chore: ignore local secrets, venv and run artifacts` | appended `.gitignore` block |
+| 3 | `data: import official tool_efficiency_benchmark @ feb354a5` | `benchmark/` |
+| 4 | `feat: add reproduction driver and grading scripts` | `scripts/` |
+| 5 | `docs: describe results layout` | `results/README.md` |
+| 6 | `results: baseline measurements (5 tasks x 5 trials)` | `results/baseline/` |
+| 7 | `results: temp0 measurements (5 tasks x 5 trials)` | `results/temp0/` |
+| 8 | `feat: add one-command baseline runner (temperature=1.0)` | `experiments/` |
+| 9 | `feat(modification): sampling temperature 1.0 -> 0.0` | **one line** |
+
+---
+
+# GenericAgent 复现项目（FTEC5660 Reproducibility Work）
+
+本项目对开源智能体框架 **GenericAgent**（*A Token-Efficient Self-Evolving LLM
+Agent via Contextual Information Density Maximization*）进行可复现性实验：在
+本地 Windows 上使用 **DeepSeek API** 复现其 `tool_efficiency_benchmark` 中若干
+**离线确定性任务**的成功率，并完成一个**隔离、可量化的小改动**（采样温度
+temperature 由 `1.0` 改为 `0.0`）。
+
+- 上游框架：<https://github.com/lsdefine/GenericAgent> —— 本仓库为 **fork**，
+  固定在上游 `main` HEAD `68d996a4`（2026-11-06）。
+- Benchmark / 技术报告来源：<https://github.com/JinyiHan99/GA-Technical-Report>，
+  版本 `feb354a5`（2026-06-15）。
+- 作业提交共三项：≤10 页 brief report、本 GitHub 链接、≤15 分钟 Zoom 录屏。
+
+> **受控变量声明（重要）**：原论文使用 Claude Sonnet 4.6，本项目改用公开可访问的
+> `deepseek-v4-pro`（DeepSeek V4 Pro，OpenAI 兼容接口）。模型与解码参数均为受控变量，
+> 因此本项目得到的成功率**不能与论文数值直接比较**，仅用于在同一设置下复现
+> 「任务能否被正确完成」这一行为，并做 baseline 与 modification 的内部对照。
+
+---
+
+## 1. 哪些来自上游 / 哪些是本项目的
+
+本仓库是 fork，因此**上游框架代码直接位于仓库根目录**（`agentmain.py`、
+`llmcore.py`、`ga.py`、`memory/`、`plugins/` 等），**没有 `GenericAgent/` 子目录**，
+也不需要另外下载一份。
+
+| 部分 | 来源 | 状态 |
+|---|---|---|
+| 根目录框架文件 | `lsdefine/GenericAgent` @ `68d996a4` | 逻辑未改动；`llmcore.py` 的 DeepSeek 支持为上游原生能力 |
+| `benchmark/tool_efficiency_benchmark/` | `JinyiHan99/GA-Technical-Report` @ `feb354a5` | 原样复制，16 个官方 grader 从不修改 |
+| `scripts/` | 本项目新增 | 复现驱动、grader 调用、汇总、诊断、报告生成 |
+| `experiments/run_experiment.ps1` | 本项目新增 | 一键运行脚本；研究的改动就是此处的一个默认值 |
+| `results/` | 本项目新增 | 实测输出：baseline 与 temp0，各 5 任务 × 5 次重复 |
+| 根目录 `README.md`、`.gitignore` | 本项目 | 替换 README；`.gitignore` 以追加方式扩展（保留上游原有规则） |
+
+仅 `scripts/run_single.py` 与 `scripts/check_model.py` 中的框架路径常量由
+`GenericAgent/` 子目录改为仓库根目录，以适配 fork 的目录结构，**实验逻辑未改**。
+本报告研究的「修改」是运行时参数改动（采样温度），并非对上游框架的代码修改。
+
+---
+
+## 2. 目录结构
+
+```
+<仓库根目录>/                  # fork 自 lsdefine/GenericAgent，根目录即上游框架
+├─ agentmain.py, llmcore.py, ga.py, agent_loop.py, pyproject.toml, ...
+├─ memory/, plugins/, reflect/, frontends/, docs/, assets/   # 上游框架目录
+├─ mykey_template.py          # 上游模板；本地复制为 mykey.py
+├─ benchmark/
+│  └─ tool_efficiency_benchmark/
+│     ├─ tool_efficiency_tasks.jsonl   # 16 个任务定义
+│     ├─ graders/                      # 16 个官方自动评分器
+│     └─ assets/                       # 各任务输入文件（按 task_id 分目录）
+├─ scripts/
+│  ├─ run_benchmark.py        # 批量运行 + 调用官方 grader + 汇总
+│  ├─ run_single.py           # 单任务驱动（隔离 workspace + monkeypatch）
+│  ├─ grade_windows.py        # grader 调用辅助
+│  ├─ analyze_stability.py    # 多次重复的均值 / 方差
+│  ├─ inspect_assets.py       # 查看输入数据的正确答案参考
+│  ├─ check_model.py          # 检查模型配置 / import
+│  ├─ diagnose_platform.py    # 平台诊断
+│  └─ build_report.py         # 生成 brief report（.docx）
+├─ experiments/
+│  └─ run_experiment.ps1      # 一键运行；改动就在这里
+├─ results/
+│  ├─ baseline/               # temperature 1.0，5 任务 × 5 次
+│  ├─ temp0/                  # temperature 0.0，5 任务 × 5 次
+│  └─ stability_analysis.json # 各任务均值 / 方差对比
+├─ workspaces/                # 每任务隔离执行目录（gitignore）
+├─ .venv/                     # 虚拟环境（gitignore）
+├─ deepseek_key.txt           # 本地密钥（gitignore，不提交）
+└─ .gitignore                 # 上游规则 + 追加的复现规则
 ```
 
-| 你说的一句话 | 第一次做了什么 | 之后每次 |
-| :--- | :--- | :--- |
-| *"监控股票并提醒我"* | 安装 `mootdx` → 构建选股流程 → 配置定时任务 → 保存 Skill | **一句话启动** |
-| *"用 Gmail 发这个文件"* | 配置 OAuth → 编写发送脚本 → 保存 Skill | **直接可用** |
+---
 
-用几周后，你的 Agent 实例将拥有一套任何人都没有的专属技能树，全部从 3K 行种子代码中生长而来。
+## 3. 环境要求
+
+- Windows + Python `>=3.10,<3.14`（本项目使用 Python 3.13）
+- DeepSeek API key（OpenAI 兼容接口）
+- 无需 Docker / conda，也无需另外下载上游框架：`git clone` 本仓库即可
+
+主要依赖：`requests`、`beautifulsoup4`、`bottle`、`simple-websocket-server`、
+`aiohttp`、`pandas`、`openpyxl`、`nbformat`、`numpy`。
 
 ---
 
-## 📊 与同类产品对比
+## 4. 安装与配置
 
-| 特性 | **GenericAgent** | OpenClaw | Claude Code |
-| :--- | :---: | :---: | :---: |
-| **代码量** | ~3K 行 | ~530,000 行 | 已开源（体量大） |
-| **部署方式** | `pip install` + API Key | 多服务编排 | CLI + 订阅 |
-| **浏览器控制** | 注入真实浏览器（保留登录态） | 沙箱 / 无头浏览器 | 通过 MCP 插件 |
-| **OS 控制** | 键鼠、视觉、ADB | 多 Agent 委派 | 文件 + 终端 |
-| **自我进化** | 自主生长 Skill 和工具 | 插件生态 | 会话间无状态 |
-| **出厂配置** | 几个核心文件 + 少量初始 Skills | 数百模块 | 丰富 CLI 工具集 |
+以下命令均在**仓库根目录**执行。
 
----
+```powershell
+# 1) 创建并激活虚拟环境
+python -m venv .venv
+.venv\Scripts\Activate.ps1
 
-## 📈 评测
+# 2) 安装依赖
+pip install requests beautifulsoup4 bottle simple-websocket-server aiohttp pandas openpyxl nbformat numpy
 
-> 📂 完整的评测数据集以及评测结果见：[**JinyiHan99/GA-Technical-Report**](https://github.com/JinyiHan99/GA-Technical-Report/tree/main)
+# 3) 从上游模板生成本地模型配置（mykey.py 被 gitignore，但运行时必需）
+Copy-Item mykey_template.py mykey.py
 
-我们从 **五大维度** 评测 GenericAgent：
+# 4) 配置 DeepSeek 密钥
+#    在本地新建 deepseek_key.txt，内容为一行：
+#    DEEPSEEK_API_KEY=sk-你的真实key
+#    （也可使用环境变量 DEEPSEEK_API_KEY，优先级更高）
+```
 
-| # | 维度 | 核心问题 | 使用的基准 |
-| :---: | :--- | :--- | :--- |
-| 1 | **任务完成度与 Token 效率** | GA 能否以更低成本完成高难度任务？ | SOP-Bench、Lifelong AgentBench、RealFin-Benchmark |
-| 2 | **工具使用效率** | 最小原子工具集能否以更低开销替代专用工具集？ | Tool Efficiency Benchmark |
-| 3 | **记忆系统有效性** | 精简分层记忆能否超越冗余记忆和基于 Embedding 的检索器？ | SOP-Bench、LoCoMo、20-skill 压力测试 |
-| 4 | **自我进化能力** | Agent 能否在无人干预下将经验提炼为可复用的 SOP 与代码？ | 9 轮 LangChain 纵向研究、8 任务跨任务 Web 基准 |
-| 5 | **网页浏览能力** | 信息密度驱动设计能否适应开放网页？ | WebCanvas、BrowseComp-ZH、自定义任务 |
-
-以上维度的基线包括 **Claude Code**、**OpenAI CodeX** 和 **OpenClaw**，分别在 *Claude Sonnet 4.6*、*Claude Opus 4.6*、*GPT-5.4* 和 *MiniMax M2.7* 底座上进行评测。
-
-<table>
-  <tr>
-    <td align="center" width="50%">
-      <img src="assets/images/result_radar.png" width="100%" alt="工具使用效率雷达图"/><br/>
-      <sub><b>工具使用效率雷达图。</b>GA 在 Token、请求数和工具调用轴上全面领先，同时在四个任务维度上保持质量。</sub>
-    </td>
-    <td align="center" width="50%">
-      <img src="assets/images/result_convergence.png" width="100%" alt="跨任务自我进化收敛曲线"/><br/>
-      <sub><b>跨任务自我进化。</b>GA 的第二轮和第三轮执行在 8 个 Web 任务上收敛至稳定的低成本区间。</sub>
-    </td>
-  </tr>
-</table>
-
-### GA Web 工具的浏览器真实性
-
-GA Web 工具运行在**真实、持久化的 Chrome/Chromium 会话**中，而不是一次性的 headless 沙箱，因此可以保留 Cookie、登录态、扩展、GPU/WebGL 行为以及正常浏览器会话指纹。
-
-| 检测服务 / 信号 | 普通 Headless 自动化 | GA Web 工具 | 说明 |
-| :--- | :---: | :---: | :--- |
-| SannySoft headless test | 常被识别 | ✅ 56/56 通过 | `bot.sannysoft.com` |
-| bot.incolumitas.com | 常在 webdriver / CDP 项异常 | ✅ 36/36 通过 | `WEBDRIVER`、`SELENIUM_DRIVER`、`webDriverAdvanced` 全部 OK |
-| BrowserScan bot detection | 常显示异常 | ✅ Normal | `browserscan.net` |
-| Device & Browser Info bot test | 多个 bot 标记 | ✅ Human / `isBot=false` | `deviceandbrowserinfo.com` |
-| FingerprintJS bot detection demo | 常被识别 | ✅ 通过 | Demo 流程完成，未给出 bot 判定 |
-| reCAPTCHA v3 demo | 低分 / bot-like | ✅ 0.9 真人相似分 | v3 是基于分数的风险信号；0.9 高于常见生产阈值 |
-
-对于 reCAPTCHA v3，`0.9` 不是“点过验证码”的结果，而是风控模型返回的高置信真人相似分，通常足以通过生产环境中的常见阈值，避免进入更严格挑战。
+`deepseek_key.txt`、`mykey.py`、`.env`、`.venv/`、`workspaces/`、`temp/`
+均已被 `.gitignore` 忽略，不在版本库中。
 
 ---
 
-## 📅 路线图与最新动态
+## 5. 运行实验
 
-- **2026-05-23** — 🆕 **TUI v3 正式发布**（`frontends/tui_v3.py`）。基于块的滚屏回看 + 正确的 resize 重排，每终端独立配色保证跨终端一致，并与 v2 达成功能对齐。
-- **2026-05-18** — 🆕 **Morphling 模式**。项目级能力吞噬 —— 从任意外部仓库抽取目标与测例后，对每个核心组件分别决定调用、重写或舍弃。详见 `memory/morphling_sop.md`。
-- **2026-05-17** — 🆕 **Goal Hive 模式**。多 worker 协作版 Goal —— Master/Worker 通过 BBS 协同推进长程目标。详见 `memory/goal_hive_sop.md`。
-- **2026-05-15** — 🖥️ **桌面 GUI 发布**。一键安装会自带可直接运行的桌面端（`frontends/GenericAgent.exe`），开发者也可用 `python launch.pyw` 启动。
-- **2026-05-14** — 🆕 **Conductor 子 Agent 编排**。派发、监督、自动清理并行子 Agent；与 `/btw` 旁路子 Agent 互补，提供一等公民级的任务委派原语。
-- **2026-05-12** — 🆕 **TUI v2 正式发布**（`frontends/tuiapp_v2.py`）。重做视觉风格的 Textual 前端，支持图片粘贴折叠、文件粘贴、块删除、Ctrl+C 复制、历史导航，以及 `/llm` / `/export` / `/continue` 选择器。
-- **2026-05-08** — 🆕 **Goal 模式**（`reflect/goal_mode.py`）。时间预算驱动的自驱循环 —— "持续优化 X N 小时"，预算没到不准提前交付。
-- **2026-04-21** — 📄 [**技术报告已发布至 arXiv**](https://arxiv.org/abs/2604.17091) — *GenericAgent: A Token-Efficient Self-Evolving LLM Agent via Contextual Information Density Maximization*。
-- **2026-04-11** — 引入 **L4 会话归档记忆**，并接入 scheduler cron 调度。
-- **2026-03-23** — 支持个人微信接入作为 Bot 前端。
-- **2026-03-10** — [发布百万级 Skill 库](https://mp.weixin.qq.com/s/q2gQ7YvWoiAcwxzaiwpuiQ?scene=1&click_id=7)。
-- **2026-03-08** — [发布以 GenericAgent 为核心的"政务龙虾" Dintal Claw](https://mp.weixin.qq.com/s/eiEhwo-j6S-WpLxgBnNxBg)。
-- **2026-03-01** — [被机器之心报道](https://mp.weixin.qq.com/s/uVWpTTF5I1yzAENV_qm7yg)。
-- **2026-01-16** — GenericAgent **V1.0** 公开版本发布。
+### 5.1 基线（temperature = 1.0）
 
----
+```powershell
+powershell -ExecutionPolicy Bypass -File .\experiments\run_experiment.ps1 `
+  -Label baseline -Temperature 1.0 -Repeats 5
+```
 
-## ⭐ 社区与支持
+### 5.2 小改动（temperature = 0.0）
 
-如果这个项目对你有帮助，欢迎点一个 **Star!** 🙏
+```powershell
+powershell -ExecutionPolicy Bypass -File .\experiments\run_experiment.ps1 `
+  -Label temp0 -Repeats 5
+```
 
-也欢迎加入 **GenericAgent 体验交流群**，一起交流、反馈、共建 👏
+temp0 不需要传 `-Temperature`：改动 commit 之后脚本默认值即为 `0.0`。
+其余条件（任务、重复次数、grader、模型、prompt、解码参数）完全一致。
 
-<div align="center">
-  <table>
-    <tr>
-      <td align="center"><strong>微信群 23</strong><br/><img src="assets/images/wechat_group22.jpg" alt="微信群 23 二维码" width="240"/></td>
-    </tr>
-  </table>
-</div>
+等价的底层命令：
 
-### 🚩 友情链接
+```powershell
+.venv\Scripts\python.exe scripts\run_benchmark.py --label baseline `
+  --tasks teb_01,teb_02,teb_06,teb_07,teb_08 --repeats 5 --temperature 1.0
 
-感谢 **LinuxDo** 社区的支持！
+.venv\Scripts\python.exe scripts\run_benchmark.py --label temp0 `
+  --tasks teb_01,teb_02,teb_06,teb_07,teb_08 --repeats 5 --temperature 0.0
+```
 
-[![LinuxDo](https://img.shields.io/badge/社区-LinuxDo-blue?style=for-the-badge)](https://linux.do/)
+其他辅助脚本：
 
-**社区 GUI 客户端** *（独立开源项目）*：
+```powershell
+.venv\Scripts\python.exe scripts\inspect_assets.py      # 查看输入数据的正确答案参考
+.venv\Scripts\python.exe scripts\analyze_stability.py   # 重新生成 stability_analysis.json
+```
 
-- [chilishark27/ga-manager](https://github.com/chilishark27/ga-manager)
-- [wangjc683/galley](https://github.com/wangjc683/galley) —— 开箱即用的本地 Agent 工作台，自带 GA 内核（内置 CPython 3.11 + 运行依赖），GUI/CLI 双原生、多 session + Project 编排、本地优先。
-- [FroStorM/A3Agent](https://github.com/FroStorM/A3Agent/tree/workbench)
-- [Fwind43/GenericAgent-Admin](https://github.com/Fwind43/GenericAgent-Admin) —— Go + React 桌面管理面板：服务生命周期管理、原生 Chat、Goal 模式、BBS 团队看板、文件编辑器、模型配置向导、TMWebDriver 监控、自更新，以及 Windows 托盘/桌面宠物集成。
-- [Fwind43/GenericAgent-Harness](https://github.com/Fwind43/GenericAgent-Harness) —— 一切皆插件的 GA 外壳，不改 GA 源码，提供 Web / TUI / 桌面版。
+已提交的 `results/` 内含 **5 任务 × 5 次 × 2 组 = 50 次运行**，
+无需重跑即可报告均值与方差。
 
 ---
 
-## 📄 许可
+## 6. 本作业研究的唯一改动（隔离、可量化）
 
-基于 **MIT License** 发布，详见 [`LICENSE`](LICENSE)。
+| | baseline | modification |
+|---|---|---|
+| 采样温度 temperature | `1.0` | **`0.0`** |
+| 任务 | `teb_01, teb_02, teb_06, teb_07, teb_08` | 完全相同 |
+| 重复次数 | 5 | 完全相同 |
+| grader | 官方，未修改 | 完全相同 |
+| 模型 / prompt | `deepseek-v4-pro`，未改动 | 完全相同 |
 
-> *声明：GenericAgent 官方渠道为本 GitHub 仓库和 [https://gaagent.ai](https://gaagent.ai)。DintalClaw 是目前唯一官方授权的商业合作方；除非在此处明确列出，其他使用 GenericAgent 名义的第三方网站、机构、组织或个人均非官方。*
+改动位于 commit
+`feat(modification): sampling temperature 1.0 -> 0.0 (isolated change)`，
+diff 仅为 `experiments/run_experiment.ps1` 的**一行默认值**。这是作业允许的
+参数改动，未修改上游框架代码。由于底层 LLM 与论文不同，此对照仅在同一设置下成立，
+见前文受控变量声明。
 
+---
 
+## 7. 评分方式
+
+每次运行后，`scripts/run_benchmark.py` 自动调用对应的**官方 grader**：
+
+```
+python <grader>.py --workspace <workspace> --response-file <response>
+```
+
+grader 输出一行 JSON，其中 `task_success` 为布尔值。部分任务（`teb_01/02/06`）会用
+`rglob` 核对 workspace 中的**真实文件**，因此输入资产会先完整复制进每个隔离
+workspace。汇总结果写入 `results/<label>/summary.json` 与 `summary.csv`，
+包含成功率、耗时与 token 用量；`results/<label>/grade_windows.json` 记录 grader
+调用过程。grader 本身从不修改。
+
+---
+
+## 8. 复现的任务（5 个离线确定性任务）
+
+| 任务 | 考察能力 | 类型 |
+|---|---|---|
+| teb_01_glob_markdown_list | 列举全部 `.md` 文件（Glob） | 只读 |
+| teb_02_grep_todo_hits | 检索全部 `TODO` 命中（Grep） | 只读 |
+| teb_06_notebook_inspect | 在 Jupyter notebook 插入 code 单元 | 文件修改 |
+| teb_07_csv_stats | CSV 行数 / 表头 / 数值统计 | 只读 |
+| teb_08_xlsx_budget_extract | Excel 工作表与金额读取 | 只读 |
+
+刻意排除依赖实时网页的 `teb_03/05` 与长程复杂任务 `teb_12–16`，以保证结果确定、
+可在有限时间与预算内复现。
+
+---
+
+## 9. 结果文件
+
+```
+results/
+├─ baseline/<task_id>/r1..r5/{prompt.txt, response.txt, stats.json}
+├─ temp0/<task_id>/r1..r5/{prompt.txt, response.txt, stats.json}
+├─ baseline/{summary.json, summary.csv, grade_windows.json}
+├─ temp0/{summary.json, summary.csv, grade_windows.json}
+└─ stability_analysis.json     # 各任务、各条件的均值 / 方差
+```
+
+建议先看 `results/stability_analysis.json` 的汇总对比，再看两个 `summary.csv`
+的逐任务数字。
+
+---
+
+## 10. 安全说明
+
+- 密钥仅存在于本地 `deepseek_key.txt`（或环境变量 `DEEPSEEK_API_KEY`），
+  该文件与 `mykey.py` 均被忽略，不会提交。
+- 智能体在每个任务的独立子进程、独立 workspace 中运行，不改动上游代码，
+  也不访问项目目录之外的文件。
+- 运行产物（`workspaces/`、`temp/`、`.venv/`）不进入版本库。
+
+---
+
+## 11. Commit 结构（供评分人查阅）
+
+本 fork 在上游 `main` 之上只有少量可审阅的小 commit，没有整包 vendor dump：
+
+| # | Commit | 内容 |
+|---|---|---|
+| 1 | `docs: replace upstream README with FTEC5660 reproduction guide` | 本文件 |
+| 2 | `chore: ignore local secrets, venv and run artifacts` | 追加的 `.gitignore` 规则 |
+| 3 | `data: import official tool_efficiency_benchmark @ feb354a5` | `benchmark/` |
+| 4 | `feat: add reproduction driver and grading scripts` | `scripts/` |
+| 5 | `docs: describe results layout` | `results/README.md` |
+| 6 | `results: baseline measurements (5 tasks x 5 trials)` | `results/baseline/` |
+| 7 | `results: temp0 measurements (5 tasks x 5 trials)` | `results/temp0/` |
+| 8 | `feat: add one-command baseline runner (temperature=1.0)` | `experiments/` |
+| 9 | `feat(modification): sampling temperature 1.0 -> 0.0` | **仅一行** |
