@@ -1,0 +1,14 @@
+{
+  "ctx": 1884,
+  "msgs": 5,
+  "session": "deepseek-v4-pro",
+  "t_start": 1794554240.0968153,
+  "t_ttft": 1794554240.6814601,
+  "inp": 3319,
+  "cached": 3200,
+  "out": 148,
+  "t_end": 1794554243.4596245,
+  "tps": 53.27258556257534,
+  "workspace": "workspaces\\temp0\\teb_01_glob_markdown_list\\r2",
+  "model": "deepseek-v4-pro"
+}

@@ -1,0 +1,14 @@
+{
+  "ctx": 8672,
+  "msgs": 9,
+  "session": "deepseek-v4-pro",
+  "t_start": 1794554945.145219,
+  "t_ttft": 1794554945.7118742,
+  "inp": 5359,
+  "cached": 5120,
+  "out": 308,
+  "t_end": 1794554949.913976,
+  "tps": 73.29665520787304,
+  "workspace": "workspaces\\temp0\\teb_08_xlsx_budget_extract\\r2",
+  "model": "deepseek-v4-pro"
+}

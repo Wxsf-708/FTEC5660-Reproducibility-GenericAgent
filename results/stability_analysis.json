@@ -1,0 +1,122 @@
+{
+  "baseline": {
+    "label": "baseline",
+    "temperature": null,
+    "n_runs": 25,
+    "official_success_rate": 0.6,
+    "semantic_success_rate": 1.0,
+    "inp_tokens": {
+      "mean": 4708.04,
+      "median": 4663,
+      "std": 904.05,
+      "total": 117701,
+      "max": 6711
+    },
+    "out_tokens": {
+      "mean": 226.2,
+      "median": 198,
+      "std": 160.74,
+      "total": 5655,
+      "max": 547
+    },
+    "turns": {
+      "mean": 4.44,
+      "median": 4,
+      "std": 0.94,
+      "total": 111,
+      "max": 6
+    },
+    "per_task": {
+      "teb_01_glob_markdown_list": {
+        "official_rate": "0/5",
+        "semantic_rate": "5/5",
+        "unique_answer_count": 1,
+        "fully_consistent": true
+      },
+      "teb_02_grep_todo_hits": {
+        "official_rate": "5/5",
+        "semantic_rate": "5/5",
+        "unique_answer_count": 1,
+        "fully_consistent": true
+      },
+      "teb_06_notebook_inspect": {
+        "official_rate": "0/5",
+        "semantic_rate": "5/5",
+        "unique_answer_count": 2,
+        "fully_consistent": false
+      },
+      "teb_07_csv_stats": {
+        "official_rate": "5/5",
+        "semantic_rate": "5/5",
+        "unique_answer_count": 1,
+        "fully_consistent": true
+      },
+      "teb_08_xlsx_budget_extract": {
+        "official_rate": "5/5",
+        "semantic_rate": "5/5",
+        "unique_answer_count": 5,
+        "fully_consistent": false
+      }
+    }
+  },
+  "temp0": {
+    "label": "temp0",
+    "temperature": 0.0,
+    "n_runs": 25,
+    "official_success_rate": 0.6,
+    "semantic_success_rate": 1.0,
+    "inp_tokens": {
+      "mean": 4985.32,
+      "median": 4778,
+      "std": 1399.4,
+      "total": 124633,
+      "max": 9346
+    },
+    "out_tokens": {
+      "mean": 316.12,
+      "median": 255,
+      "std": 369.74,
+      "total": 7903,
+      "max": 1868
+    },
+    "turns": {
+      "mean": 4.28,
+      "median": 4,
+      "std": 1.0,
+      "total": 107,
+      "max": 7
+    },
+    "per_task": {
+      "teb_01_glob_markdown_list": {
+        "official_rate": "0/5",
+        "semantic_rate": "5/5",
+        "unique_answer_count": 1,
+        "fully_consistent": true
+      },
+      "teb_02_grep_todo_hits": {
+        "official_rate": "5/5",
+        "semantic_rate": "5/5",
+        "unique_answer_count": 1,
+        "fully_consistent": true
+      },
+      "teb_06_notebook_inspect": {
+        "official_rate": "0/5",
+        "semantic_rate": "5/5",
+        "unique_answer_count": 3,
+        "fully_consistent": false
+      },
+      "teb_07_csv_stats": {
+        "official_rate": "5/5",
+        "semantic_rate": "5/5",
+        "unique_answer_count": 3,
+        "fully_consistent": false
+      },
+      "teb_08_xlsx_budget_extract": {
+        "official_rate": "5/5",
+        "semantic_rate": "5/5",
+        "unique_answer_count": 5,
+        "fully_consistent": false
+      }
+    }
+  }
+}

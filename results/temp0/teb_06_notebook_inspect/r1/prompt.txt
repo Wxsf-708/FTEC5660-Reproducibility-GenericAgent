@@ -1,0 +1,10 @@
+工作区中提供了一个 Notebook 文件 `analysis.ipynb`。请在定义 `summary` 变量的 code 单元之后插入一个新的 code 单元，并保存 notebook。新单元必须创建变量 `release_snapshot`，其值需要基于 notebook 中已有变量计算，格式如下：
+```python
+release_snapshot = {
+  "mean_value": ...,
+  "tool_count": ...,
+  "step_claim": ...
+}
+release_snapshot
+```
+其中 `mean_value` 必须根据 `values` 计算平均值，不能手工写死；`tool_count` 与 `step_claim` 必须来自 `summary`。完成后直接输出 `OK` 即可，不要附加解释。

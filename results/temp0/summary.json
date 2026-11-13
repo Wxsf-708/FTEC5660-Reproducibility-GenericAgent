@@ -1,0 +1,522 @@
+{
+  "label": "temp0",
+  "temperature": 0.0,
+  "disable_tools": "",
+  "rows": [
+    {
+      "task_id": "teb_01_glob_markdown_list",
+      "run_idx": 1,
+      "task_success": false,
+      "grade": {
+        "response_present": true,
+        "json_block_found": true,
+        "files_field_ok": true,
+        "files_match_expected": false,
+        "final_outputs_present": true,
+        "task_success": false
+      },
+      "elapsed_sec": 18.0,
+      "inp_tokens": 3838,
+      "out_tokens": 157,
+      "cached_tokens": 3712,
+      "model": "deepseek-v4-pro",
+      "workspace": "workspaces\\temp0\\teb_01_glob_markdown_list\\r1",
+      "response_file": "results\\temp0\\teb_01_glob_markdown_list\\r1\\response.txt"
+    },
+    {
+      "task_id": "teb_01_glob_markdown_list",
+      "run_idx": 2,
+      "task_success": false,
+      "grade": {
+        "response_present": true,
+        "json_block_found": true,
+        "files_field_ok": true,
+        "files_match_expected": false,
+        "final_outputs_present": true,
+        "task_success": false
+      },
+      "elapsed_sec": 18.1,
+      "inp_tokens": 3319,
+      "out_tokens": 148,
+      "cached_tokens": 3200,
+      "model": "deepseek-v4-pro",
+      "workspace": "workspaces\\temp0\\teb_01_glob_markdown_list\\r2",
+      "response_file": "results\\temp0\\teb_01_glob_markdown_list\\r2\\response.txt"
+    },
+    {
+      "task_id": "teb_01_glob_markdown_list",
+      "run_idx": 3,
+      "task_success": false,
+      "grade": {
+        "response_present": true,
+        "json_block_found": true,
+        "files_field_ok": true,
+        "files_match_expected": false,
+        "final_outputs_present": true,
+        "task_success": false
+      },
+      "elapsed_sec": 10.3,
+      "inp_tokens": 3353,
+      "out_tokens": 162,
+      "cached_tokens": 3200,
+      "model": "deepseek-v4-pro",
+      "workspace": "workspaces\\temp0\\teb_01_glob_markdown_list\\r3",
+      "response_file": "results\\temp0\\teb_01_glob_markdown_list\\r3\\response.txt"
+    },
+    {
+      "task_id": "teb_01_glob_markdown_list",
+      "run_idx": 4,
+      "task_success": false,
+      "grade": {
+        "response_present": true,
+        "json_block_found": true,
+        "files_field_ok": true,
+        "files_match_expected": false,
+        "final_outputs_present": true,
+        "task_success": false
+      },
+      "elapsed_sec": 17.3,
+      "inp_tokens": 3783,
+      "out_tokens": 200,
+      "cached_tokens": 3584,
+      "model": "deepseek-v4-pro",
+      "workspace": "workspaces\\temp0\\teb_01_glob_markdown_list\\r4",
+      "response_file": "results\\temp0\\teb_01_glob_markdown_list\\r4\\response.txt"
+    },
+    {
+      "task_id": "teb_01_glob_markdown_list",
+      "run_idx": 5,
+      "task_success": false,
+      "grade": {
+        "response_present": true,
+        "json_block_found": true,
+        "files_field_ok": true,
+        "files_match_expected": false,
+        "final_outputs_present": true,
+        "task_success": false
+      },
+      "elapsed_sec": 13.6,
+      "inp_tokens": 3524,
+      "out_tokens": 175,
+      "cached_tokens": 3328,
+      "model": "deepseek-v4-pro",
+      "workspace": "workspaces\\temp0\\teb_01_glob_markdown_list\\r5",
+      "response_file": "results\\temp0\\teb_01_glob_markdown_list\\r5\\response.txt"
+    },
+    {
+      "task_id": "teb_02_grep_todo_hits",
+      "run_idx": 1,
+      "task_success": true,
+      "grade": {
+        "response_present": true,
+        "json_block_found": true,
+        "hits_field_ok": true,
+        "hits_match_expected": true,
+        "final_outputs_present": true,
+        "task_success": true
+      },
+      "elapsed_sec": 51.8,
+      "inp_tokens": 6757,
+      "out_tokens": 613,
+      "cached_tokens": 6656,
+      "model": "deepseek-v4-pro",
+      "workspace": "workspaces\\temp0\\teb_02_grep_todo_hits\\r1",
+      "response_file": "results\\temp0\\teb_02_grep_todo_hits\\r1\\response.txt"
+    },
+    {
+      "task_id": "teb_02_grep_todo_hits",
+      "run_idx": 2,
+      "task_success": true,
+      "grade": {
+        "response_present": true,
+        "json_block_found": true,
+        "hits_field_ok": true,
+        "hits_match_expected": true,
+        "final_outputs_present": true,
+        "task_success": true
+      },
+      "elapsed_sec": 44.0,
+      "inp_tokens": 6630,
+      "out_tokens": 289,
+      "cached_tokens": 6528,
+      "model": "deepseek-v4-pro",
+      "workspace": "workspaces\\temp0\\teb_02_grep_todo_hits\\r2",
+      "response_file": "results\\temp0\\teb_02_grep_todo_hits\\r2\\response.txt"
+    },
+    {
+      "task_id": "teb_02_grep_todo_hits",
+      "run_idx": 3,
+      "task_success": true,
+      "grade": {
+        "response_present": true,
+        "json_block_found": true,
+        "hits_field_ok": true,
+        "hits_match_expected": true,
+        "final_outputs_present": true,
+        "task_success": true
+      },
+      "elapsed_sec": 37.6,
+      "inp_tokens": 4852,
+      "out_tokens": 848,
+      "cached_tokens": 4736,
+      "model": "deepseek-v4-pro",
+      "workspace": "workspaces\\temp0\\teb_02_grep_todo_hits\\r3",
+      "response_file": "results\\temp0\\teb_02_grep_todo_hits\\r3\\response.txt"
+    },
+    {
+      "task_id": "teb_02_grep_todo_hits",
+      "run_idx": 4,
+      "task_success": true,
+      "grade": {
+        "response_present": true,
+        "json_block_found": true,
+        "hits_field_ok": true,
+        "hits_match_expected": true,
+        "final_outputs_present": true,
+        "task_success": true
+      },
+      "elapsed_sec": 139.8,
+      "inp_tokens": 9346,
+      "out_tokens": 1868,
+      "cached_tokens": 9216,
+      "model": "deepseek-v4-pro",
+      "workspace": "workspaces\\temp0\\teb_02_grep_todo_hits\\r4",
+      "response_file": "results\\temp0\\teb_02_grep_todo_hits\\r4\\response.txt"
+    },
+    {
+      "task_id": "teb_02_grep_todo_hits",
+      "run_idx": 5,
+      "task_success": true,
+      "grade": {
+        "response_present": true,
+        "json_block_found": true,
+        "hits_field_ok": true,
+        "hits_match_expected": true,
+        "final_outputs_present": true,
+        "task_success": true
+      },
+      "elapsed_sec": 37.7,
+      "inp_tokens": 5993,
+      "out_tokens": 519,
+      "cached_tokens": 5888,
+      "model": "deepseek-v4-pro",
+      "workspace": "workspaces\\temp0\\teb_02_grep_todo_hits\\r5",
+      "response_file": "results\\temp0\\teb_02_grep_todo_hits\\r5\\response.txt"
+    },
+    {
+      "task_id": "teb_06_notebook_inspect",
+      "run_idx": 1,
+      "task_success": false,
+      "grade": {
+        "response_present": true,
+        "new_cell_index_ok": true,
+        "notebook_modified_ok": true,
+        "release_snapshot_source_ok": false,
+        "final_outputs_present": true,
+        "task_success": false
+      },
+      "elapsed_sec": 21.1,
+      "inp_tokens": 4593,
+      "out_tokens": 2,
+      "cached_tokens": 4096,
+      "model": "deepseek-v4-pro",
+      "workspace": "workspaces\\temp0\\teb_06_notebook_inspect\\r1",
+      "response_file": "results\\temp0\\teb_06_notebook_inspect\\r1\\response.txt"
+    },
+    {
+      "task_id": "teb_06_notebook_inspect",
+      "run_idx": 2,
+      "task_success": false,
+      "grade": {
+        "response_present": true,
+        "new_cell_index_ok": true,
+        "notebook_modified_ok": true,
+        "release_snapshot_source_ok": false,
+        "final_outputs_present": true,
+        "task_success": false
+      },
+      "elapsed_sec": 25.1,
+      "inp_tokens": 4524,
+      "out_tokens": 2,
+      "cached_tokens": 3968,
+      "model": "deepseek-v4-pro",
+      "workspace": "workspaces\\temp0\\teb_06_notebook_inspect\\r2",
+      "response_file": "results\\temp0\\teb_06_notebook_inspect\\r2\\response.txt"
+    },
+    {
+      "task_id": "teb_06_notebook_inspect",
+      "run_idx": 3,
+      "task_success": false,
+      "grade": {
+        "response_present": true,
+        "new_cell_index_ok": true,
+        "notebook_modified_ok": true,
+        "release_snapshot_source_ok": false,
+        "final_outputs_present": true,
+        "task_success": false
+      },
+      "elapsed_sec": 29.7,
+      "inp_tokens": 4978,
+      "out_tokens": 41,
+      "cached_tokens": 4352,
+      "model": "deepseek-v4-pro",
+      "workspace": "workspaces\\temp0\\teb_06_notebook_inspect\\r3",
+      "response_file": "results\\temp0\\teb_06_notebook_inspect\\r3\\response.txt"
+    },
+    {
+      "task_id": "teb_06_notebook_inspect",
+      "run_idx": 4,
+      "task_success": false,
+      "grade": {
+        "response_present": true,
+        "new_cell_index_ok": true,
+        "notebook_modified_ok": true,
+        "release_snapshot_source_ok": false,
+        "final_outputs_present": true,
+        "task_success": false
+      },
+      "elapsed_sec": 26.4,
+      "inp_tokens": 5035,
+      "out_tokens": 2,
+      "cached_tokens": 4224,
+      "model": "deepseek-v4-pro",
+      "workspace": "workspaces\\temp0\\teb_06_notebook_inspect\\r4",
+      "response_file": "results\\temp0\\teb_06_notebook_inspect\\r4\\response.txt"
+    },
+    {
+      "task_id": "teb_06_notebook_inspect",
+      "run_idx": 5,
+      "task_success": false,
+      "grade": {
+        "response_present": true,
+        "new_cell_index_ok": true,
+        "notebook_modified_ok": true,
+        "release_snapshot_source_ok": false,
+        "final_outputs_present": true,
+        "task_success": false
+      },
+      "elapsed_sec": 16.0,
+      "inp_tokens": 4972,
+      "out_tokens": 58,
+      "cached_tokens": 4096,
+      "model": "deepseek-v4-pro",
+      "workspace": "workspaces\\temp0\\teb_06_notebook_inspect\\r5",
+      "response_file": "results\\temp0\\teb_06_notebook_inspect\\r5\\response.txt"
+    },
+    {
+      "task_id": "teb_07_csv_stats",
+      "run_idx": 1,
+      "task_success": true,
+      "grade": {
+        "response_present": true,
+        "json_block_found": true,
+        "row_count_ok": true,
+        "columns_ok": true,
+        "numeric_summary_ok": true,
+        "final_outputs_present": true,
+        "task_success": true
+      },
+      "elapsed_sec": 20.6,
+      "inp_tokens": 3972,
+      "out_tokens": 361,
+      "cached_tokens": 3712,
+      "model": "deepseek-v4-pro",
+      "workspace": "workspaces\\temp0\\teb_07_csv_stats\\r1",
+      "response_file": "results\\temp0\\teb_07_csv_stats\\r1\\response.txt"
+    },
+    {
+      "task_id": "teb_07_csv_stats",
+      "run_idx": 2,
+      "task_success": true,
+      "grade": {
+        "response_present": true,
+        "json_block_found": true,
+        "row_count_ok": true,
+        "columns_ok": true,
+        "numeric_summary_ok": true,
+        "final_outputs_present": true,
+        "task_success": true
+      },
+      "elapsed_sec": 16.9,
+      "inp_tokens": 3661,
+      "out_tokens": 170,
+      "cached_tokens": 3456,
+      "model": "deepseek-v4-pro",
+      "workspace": "workspaces\\temp0\\teb_07_csv_stats\\r2",
+      "response_file": "results\\temp0\\teb_07_csv_stats\\r2\\response.txt"
+    },
+    {
+      "task_id": "teb_07_csv_stats",
+      "run_idx": 3,
+      "task_success": true,
+      "grade": {
+        "response_present": true,
+        "json_block_found": true,
+        "row_count_ok": true,
+        "columns_ok": true,
+        "numeric_summary_ok": true,
+        "final_outputs_present": true,
+        "task_success": true
+      },
+      "elapsed_sec": 33.6,
+      "inp_tokens": 4778,
+      "out_tokens": 196,
+      "cached_tokens": 4480,
+      "model": "deepseek-v4-pro",
+      "workspace": "workspaces\\temp0\\teb_07_csv_stats\\r3",
+      "response_file": "results\\temp0\\teb_07_csv_stats\\r3\\response.txt"
+    },
+    {
+      "task_id": "teb_07_csv_stats",
+      "run_idx": 4,
+      "task_success": true,
+      "grade": {
+        "response_present": true,
+        "json_block_found": true,
+        "row_count_ok": true,
+        "columns_ok": true,
+        "numeric_summary_ok": true,
+        "final_outputs_present": true,
+        "task_success": true
+      },
+      "elapsed_sec": 28.0,
+      "inp_tokens": 4517,
+      "out_tokens": 292,
+      "cached_tokens": 4352,
+      "model": "deepseek-v4-pro",
+      "workspace": "workspaces\\temp0\\teb_07_csv_stats\\r4",
+      "response_file": "results\\temp0\\teb_07_csv_stats\\r4\\response.txt"
+    },
+    {
+      "task_id": "teb_07_csv_stats",
+      "run_idx": 5,
+      "task_success": true,
+      "grade": {
+        "response_present": true,
+        "json_block_found": true,
+        "row_count_ok": true,
+        "columns_ok": true,
+        "numeric_summary_ok": true,
+        "final_outputs_present": true,
+        "task_success": true
+      },
+      "elapsed_sec": 23.6,
+      "inp_tokens": 3978,
+      "out_tokens": 332,
+      "cached_tokens": 3712,
+      "model": "deepseek-v4-pro",
+      "workspace": "workspaces\\temp0\\teb_07_csv_stats\\r5",
+      "response_file": "results\\temp0\\teb_07_csv_stats\\r5\\response.txt"
+    },
+    {
+      "task_id": "teb_08_xlsx_budget_extract",
+      "run_idx": 1,
+      "task_success": true,
+      "grade": {
+        "response_present": true,
+        "json_block_found": true,
+        "sheet_names_ok": true,
+        "budget_total_ok": true,
+        "expense_total_ok": true,
+        "summary_ok": true,
+        "final_outputs_present": true,
+        "task_success": true
+      },
+      "elapsed_sec": 70.8,
+      "inp_tokens": 7564,
+      "out_tokens": 255,
+      "cached_tokens": 7424,
+      "model": "deepseek-v4-pro",
+      "workspace": "workspaces\\temp0\\teb_08_xlsx_budget_extract\\r1",
+      "response_file": "results\\temp0\\teb_08_xlsx_budget_extract\\r1\\response.txt"
+    },
+    {
+      "task_id": "teb_08_xlsx_budget_extract",
+      "run_idx": 2,
+      "task_success": true,
+      "grade": {
+        "response_present": true,
+        "json_block_found": true,
+        "sheet_names_ok": true,
+        "budget_total_ok": true,
+        "expense_total_ok": true,
+        "summary_ok": true,
+        "final_outputs_present": true,
+        "task_success": true
+      },
+      "elapsed_sec": 39.5,
+      "inp_tokens": 5359,
+      "out_tokens": 308,
+      "cached_tokens": 5120,
+      "model": "deepseek-v4-pro",
+      "workspace": "workspaces\\temp0\\teb_08_xlsx_budget_extract\\r2",
+      "response_file": "results\\temp0\\teb_08_xlsx_budget_extract\\r2\\response.txt"
+    },
+    {
+      "task_id": "teb_08_xlsx_budget_extract",
+      "run_idx": 3,
+      "task_success": true,
+      "grade": {
+        "response_present": true,
+        "json_block_found": true,
+        "sheet_names_ok": true,
+        "budget_total_ok": true,
+        "expense_total_ok": true,
+        "summary_ok": true,
+        "final_outputs_present": true,
+        "task_success": true
+      },
+      "elapsed_sec": 39.5,
+      "inp_tokens": 5677,
+      "out_tokens": 260,
+      "cached_tokens": 5504,
+      "model": "deepseek-v4-pro",
+      "workspace": "workspaces\\temp0\\teb_08_xlsx_budget_extract\\r3",
+      "response_file": "results\\temp0\\teb_08_xlsx_budget_extract\\r3\\response.txt"
+    },
+    {
+      "task_id": "teb_08_xlsx_budget_extract",
+      "run_idx": 4,
+      "task_success": true,
+      "grade": {
+        "response_present": true,
+        "json_block_found": true,
+        "sheet_names_ok": true,
+        "budget_total_ok": true,
+        "expense_total_ok": true,
+        "summary_ok": true,
+        "final_outputs_present": true,
+        "task_success": true
+      },
+      "elapsed_sec": 19.1,
+      "inp_tokens": 4117,
+      "out_tokens": 294,
+      "cached_tokens": 3968,
+      "model": "deepseek-v4-pro",
+      "workspace": "workspaces\\temp0\\teb_08_xlsx_budget_extract\\r4",
+      "response_file": "results\\temp0\\teb_08_xlsx_budget_extract\\r4\\response.txt"
+    },
+    {
+      "task_id": "teb_08_xlsx_budget_extract",
+      "run_idx": 5,
+      "task_success": true,
+      "grade": {
+        "response_present": true,
+        "json_block_found": true,
+        "sheet_names_ok": true,
+        "budget_total_ok": true,
+        "expense_total_ok": true,
+        "summary_ok": true,
+        "final_outputs_present": true,
+        "task_success": true
+      },
+      "elapsed_sec": 41.8,
+      "inp_tokens": 5513,
+      "out_tokens": 351,
+      "cached_tokens": 5376,
+      "model": "deepseek-v4-pro",
+      "workspace": "workspaces\\temp0\\teb_08_xlsx_budget_extract\\r5",
+      "response_file": "results\\temp0\\teb_08_xlsx_budget_extract\\r5\\response.txt"
+    }
+  ]
+}
