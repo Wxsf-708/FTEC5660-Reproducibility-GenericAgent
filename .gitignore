@@ -159,3 +159,29 @@ plugins/subscription_portal.py
 
 # Local-only model reload regression tests
 /frontends/tests/test_mykeys_reload.py
+
+# ===== FTEC5660 reproduction: local secrets & run artifacts (APPEND ONLY) =====
+# IMPORTANT: append this block to the END of the upstream .gitignore in the web
+# editor. Do NOT replace the whole file, or upstream rules may be lost.
+# Fork layout has no GenericAgent/ prefix -> ignore "temp/" at repo root.
+
+deepseek_key.txt
+**/deepseek_key.txt
+mykey.py
+**/mykey.py
+*.env
+.env
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+**/__pycache__/
+workspaces/
+temp/
+*.zip
+.DS_Store
+Thumbs.db
+
+# Deliberately NOT ignored: scripts/, benchmark/, results/, experiments/
+# (these are the measured outputs and the graded deliverables).
