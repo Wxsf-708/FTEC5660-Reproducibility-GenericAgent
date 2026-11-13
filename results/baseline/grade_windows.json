@@ -1,0 +1,372 @@
+{
+  "label": "baseline",
+  "official_rate": "15/25",
+  "semantic_rate": "25/25",
+  "rows": [
+    {
+      "task_id": "teb_01_glob_markdown_list",
+      "official_success": false,
+      "semantic_success": true,
+      "adaptation_note": "仅规范化路径分隔符: agent=['README.md', 'docs/guide.md'] expected=['README.md', 'docs/guide.md']",
+      "official_detail": {
+        "response_present": true,
+        "json_block_found": true,
+        "files_field_ok": true,
+        "files_match_expected": false,
+        "final_outputs_present": true,
+        "task_success": false
+      }
+    },
+    {
+      "task_id": "teb_01_glob_markdown_list",
+      "official_success": false,
+      "semantic_success": true,
+      "adaptation_note": "仅规范化路径分隔符: agent=['README.md', 'docs/guide.md'] expected=['README.md', 'docs/guide.md']",
+      "official_detail": {
+        "response_present": true,
+        "json_block_found": true,
+        "files_field_ok": true,
+        "files_match_expected": false,
+        "final_outputs_present": true,
+        "task_success": false
+      }
+    },
+    {
+      "task_id": "teb_01_glob_markdown_list",
+      "official_success": false,
+      "semantic_success": true,
+      "adaptation_note": "仅规范化路径分隔符: agent=['README.md', 'docs/guide.md'] expected=['README.md', 'docs/guide.md']",
+      "official_detail": {
+        "response_present": true,
+        "json_block_found": true,
+        "files_field_ok": true,
+        "files_match_expected": false,
+        "final_outputs_present": true,
+        "task_success": false
+      }
+    },
+    {
+      "task_id": "teb_01_glob_markdown_list",
+      "official_success": false,
+      "semantic_success": true,
+      "adaptation_note": "仅规范化路径分隔符: agent=['README.md', 'docs/guide.md'] expected=['README.md', 'docs/guide.md']",
+      "official_detail": {
+        "response_present": true,
+        "json_block_found": true,
+        "files_field_ok": true,
+        "files_match_expected": false,
+        "final_outputs_present": true,
+        "task_success": false
+      }
+    },
+    {
+      "task_id": "teb_01_glob_markdown_list",
+      "official_success": false,
+      "semantic_success": true,
+      "adaptation_note": "仅规范化路径分隔符: agent=['README.md', 'docs/guide.md'] expected=['README.md', 'docs/guide.md']",
+      "official_detail": {
+        "response_present": true,
+        "json_block_found": true,
+        "files_field_ok": true,
+        "files_match_expected": false,
+        "final_outputs_present": true,
+        "task_success": false
+      }
+    },
+    {
+      "task_id": "teb_02_grep_todo_hits",
+      "official_success": true,
+      "semantic_success": true,
+      "adaptation_note": "官方 grader 直接通过",
+      "official_detail": {
+        "response_present": true,
+        "json_block_found": true,
+        "hits_field_ok": true,
+        "hits_match_expected": true,
+        "final_outputs_present": true,
+        "task_success": true
+      }
+    },
+    {
+      "task_id": "teb_02_grep_todo_hits",
+      "official_success": true,
+      "semantic_success": true,
+      "adaptation_note": "官方 grader 直接通过",
+      "official_detail": {
+        "response_present": true,
+        "json_block_found": true,
+        "hits_field_ok": true,
+        "hits_match_expected": true,
+        "final_outputs_present": true,
+        "task_success": true
+      }
+    },
+    {
+      "task_id": "teb_02_grep_todo_hits",
+      "official_success": true,
+      "semantic_success": true,
+      "adaptation_note": "官方 grader 直接通过",
+      "official_detail": {
+        "response_present": true,
+        "json_block_found": true,
+        "hits_field_ok": true,
+        "hits_match_expected": true,
+        "final_outputs_present": true,
+        "task_success": true
+      }
+    },
+    {
+      "task_id": "teb_02_grep_todo_hits",
+      "official_success": true,
+      "semantic_success": true,
+      "adaptation_note": "官方 grader 直接通过",
+      "official_detail": {
+        "response_present": true,
+        "json_block_found": true,
+        "hits_field_ok": true,
+        "hits_match_expected": true,
+        "final_outputs_present": true,
+        "task_success": true
+      }
+    },
+    {
+      "task_id": "teb_02_grep_todo_hits",
+      "official_success": true,
+      "semantic_success": true,
+      "adaptation_note": "官方 grader 直接通过",
+      "official_detail": {
+        "response_present": true,
+        "json_block_found": true,
+        "hits_field_ok": true,
+        "hits_match_expected": true,
+        "final_outputs_present": true,
+        "task_success": true
+      }
+    },
+    {
+      "task_id": "teb_06_notebook_inspect",
+      "official_success": false,
+      "semantic_success": true,
+      "adaptation_note": "执行 notebook 得到 release_snapshot={'mean_value': 7.25, 'tool_count': 7, 'step_claim': '1-2'}",
+      "official_detail": {
+        "response_present": true,
+        "new_cell_index_ok": true,
+        "notebook_modified_ok": true,
+        "release_snapshot_source_ok": false,
+        "final_outputs_present": true,
+        "task_success": false
+      }
+    },
+    {
+      "task_id": "teb_06_notebook_inspect",
+      "official_success": false,
+      "semantic_success": true,
+      "adaptation_note": "执行 notebook 得到 release_snapshot={'mean_value': 7.25, 'tool_count': 7, 'step_claim': '1-2'}",
+      "official_detail": {
+        "response_present": true,
+        "new_cell_index_ok": true,
+        "notebook_modified_ok": true,
+        "release_snapshot_source_ok": false,
+        "final_outputs_present": true,
+        "task_success": false
+      }
+    },
+    {
+      "task_id": "teb_06_notebook_inspect",
+      "official_success": false,
+      "semantic_success": true,
+      "adaptation_note": "执行 notebook 得到 release_snapshot={'mean_value': 7.25, 'tool_count': 7, 'step_claim': '1-2'}",
+      "official_detail": {
+        "response_present": true,
+        "new_cell_index_ok": true,
+        "notebook_modified_ok": true,
+        "release_snapshot_source_ok": false,
+        "final_outputs_present": true,
+        "task_success": false
+      }
+    },
+    {
+      "task_id": "teb_06_notebook_inspect",
+      "official_success": false,
+      "semantic_success": true,
+      "adaptation_note": "执行 notebook 得到 release_snapshot={'mean_value': 7.25, 'tool_count': 7, 'step_claim': '1-2'}",
+      "official_detail": {
+        "response_present": true,
+        "new_cell_index_ok": true,
+        "notebook_modified_ok": true,
+        "release_snapshot_source_ok": false,
+        "final_outputs_present": true,
+        "task_success": false
+      }
+    },
+    {
+      "task_id": "teb_06_notebook_inspect",
+      "official_success": false,
+      "semantic_success": true,
+      "adaptation_note": "执行 notebook 得到 release_snapshot={'mean_value': 7.25, 'tool_count': 7, 'step_claim': '1-2'}",
+      "official_detail": {
+        "response_present": true,
+        "new_cell_index_ok": true,
+        "notebook_modified_ok": true,
+        "release_snapshot_source_ok": false,
+        "final_outputs_present": true,
+        "task_success": false
+      }
+    },
+    {
+      "task_id": "teb_07_csv_stats",
+      "official_success": true,
+      "semantic_success": true,
+      "adaptation_note": "官方 grader 直接通过",
+      "official_detail": {
+        "response_present": true,
+        "json_block_found": true,
+        "row_count_ok": true,
+        "columns_ok": true,
+        "numeric_summary_ok": true,
+        "final_outputs_present": true,
+        "task_success": true
+      }
+    },
+    {
+      "task_id": "teb_07_csv_stats",
+      "official_success": true,
+      "semantic_success": true,
+      "adaptation_note": "官方 grader 直接通过",
+      "official_detail": {
+        "response_present": true,
+        "json_block_found": true,
+        "row_count_ok": true,
+        "columns_ok": true,
+        "numeric_summary_ok": true,
+        "final_outputs_present": true,
+        "task_success": true
+      }
+    },
+    {
+      "task_id": "teb_07_csv_stats",
+      "official_success": true,
+      "semantic_success": true,
+      "adaptation_note": "官方 grader 直接通过",
+      "official_detail": {
+        "response_present": true,
+        "json_block_found": true,
+        "row_count_ok": true,
+        "columns_ok": true,
+        "numeric_summary_ok": true,
+        "final_outputs_present": true,
+        "task_success": true
+      }
+    },
+    {
+      "task_id": "teb_07_csv_stats",
+      "official_success": true,
+      "semantic_success": true,
+      "adaptation_note": "官方 grader 直接通过",
+      "official_detail": {
+        "response_present": true,
+        "json_block_found": true,
+        "row_count_ok": true,
+        "columns_ok": true,
+        "numeric_summary_ok": true,
+        "final_outputs_present": true,
+        "task_success": true
+      }
+    },
+    {
+      "task_id": "teb_07_csv_stats",
+      "official_success": true,
+      "semantic_success": true,
+      "adaptation_note": "官方 grader 直接通过",
+      "official_detail": {
+        "response_present": true,
+        "json_block_found": true,
+        "row_count_ok": true,
+        "columns_ok": true,
+        "numeric_summary_ok": true,
+        "final_outputs_present": true,
+        "task_success": true
+      }
+    },
+    {
+      "task_id": "teb_08_xlsx_budget_extract",
+      "official_success": true,
+      "semantic_success": true,
+      "adaptation_note": "官方 grader 直接通过",
+      "official_detail": {
+        "response_present": true,
+        "json_block_found": true,
+        "sheet_names_ok": true,
+        "budget_total_ok": true,
+        "expense_total_ok": true,
+        "summary_ok": true,
+        "final_outputs_present": true,
+        "task_success": true
+      }
+    },
+    {
+      "task_id": "teb_08_xlsx_budget_extract",
+      "official_success": true,
+      "semantic_success": true,
+      "adaptation_note": "官方 grader 直接通过",
+      "official_detail": {
+        "response_present": true,
+        "json_block_found": true,
+        "sheet_names_ok": true,
+        "budget_total_ok": true,
+        "expense_total_ok": true,
+        "summary_ok": true,
+        "final_outputs_present": true,
+        "task_success": true
+      }
+    },
+    {
+      "task_id": "teb_08_xlsx_budget_extract",
+      "official_success": true,
+      "semantic_success": true,
+      "adaptation_note": "官方 grader 直接通过",
+      "official_detail": {
+        "response_present": true,
+        "json_block_found": true,
+        "sheet_names_ok": true,
+        "budget_total_ok": true,
+        "expense_total_ok": true,
+        "summary_ok": true,
+        "final_outputs_present": true,
+        "task_success": true
+      }
+    },
+    {
+      "task_id": "teb_08_xlsx_budget_extract",
+      "official_success": true,
+      "semantic_success": true,
+      "adaptation_note": "官方 grader 直接通过",
+      "official_detail": {
+        "response_present": true,
+        "json_block_found": true,
+        "sheet_names_ok": true,
+        "budget_total_ok": true,
+        "expense_total_ok": true,
+        "summary_ok": true,
+        "final_outputs_present": true,
+        "task_success": true
+      }
+    },
+    {
+      "task_id": "teb_08_xlsx_budget_extract",
+      "official_success": true,
+      "semantic_success": true,
+      "adaptation_note": "官方 grader 直接通过",
+      "official_detail": {
+        "response_present": true,
+        "json_block_found": true,
+        "sheet_names_ok": true,
+        "budget_total_ok": true,
+        "expense_total_ok": true,
+        "summary_ok": true,
+        "final_outputs_present": true,
+        "task_success": true
+      }
+    }
+  ]
+}

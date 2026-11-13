@@ -1,0 +1,133 @@
+
+**LLM Running (Turn 1) ...**
+
+Let me inspect the notebook file first.<summary>Let me inspect the notebook file first.</summary>
+
+🛠️ Tool: `file_read`  📥 args:
+````text
+{
+  "path": "analysis.ipynb"
+}
+````
+`````
+
+[Action] Reading file: workspaces\baseline\teb_06_notebook_inspect\r3\analysis.ipynb
+`````
+
+**LLM Running (Turn 2) ...**
+
+The notebook has cells:
+1. markdown
+2. code: import statistics; values=[3,5,8,13]; statistics.mean(values)
+3. markdown
+4. code: summary = {'tools': 7, 'steps': '1-2'}
+
+I need to insert a new code cell after the summary cell (cell 4). The new cell must:
+- create variable release_snapshot
+- mean_value computed from values (use statistics.mean(values))
+- tool_count from summary (summary['tools'])
+- step_claim from summary (summary['steps'])
+- output release_snapshot
+
+The new cell source should be:
+```python
+release_snapshot = {
+  "mean_value": statistics.mean(values),
+  "tool_count": summary['tools'],
+  "step_claim": summary['steps']
+}
+release_snapshot
+```
+
+I'll write a Python script to modify the notebook.<summary>The notebook has cells:</summary>
+
+🛠️ Tool: `code_run`  📥 args:
+````text
+{
+  "script": "
+import json
+
+path = \"analysis.ipynb\"
+with open(path, \"r\", encoding=\"utf-8\") as f:
+    nb = json.load(f)
+
+new_cell = {
+    \"cell_type\": \"code\",
+    \"execution_count\": None,
+    \"metadata\": {},
+    \"outputs\": [],
+    \"source\": [
+        \"release_snapshot = {\
+\",
+        \"  \\\"mean_value\\\": statistics.mean(values),\
+\",
+        \"  \\\"tool_count\\\": summary['tools'],\
+\",
+        \"  \\\"step_claim\\\": summary['steps']\
+\",
+        \"}\
+\",
+        \"release_snapshot\
+\"
+    ]
+}
+
+cells = nb[\"cells\"]
+# find the index of the summary cell (code cell whose source contains 'summary =')
+insert_idx = None
+for i, c in enumerate(cells):
+    src = \"\".join(c.get(\"source\", []))
+    if c.get(\"cell_type\") == \"code\" and \"summary =\" in src:
+        insert_idx = i + 1
+        break
+
+assert insert_idx is not None, \"summary cell not found\"
+cells.insert(insert_idx, new_cell)
+
+with open(path, \"w\", encoding=\"utf-8\") as f:
+    json.dump(nb, f, ensure_ascii=False, indent=1)
+
+print(\"inserted at\", insert_idx)
+"
+}
+````
+`````
+[Action] Running python in r3:  import json  path = "analysis.ipynb" with open(path, "r", e...
+[Status] ✅ Exit Code: 0
+[Stdout]
+inserted at 4
+
+`````
+
+**LLM Running (Turn 3) ...**
+
+Let me verify the notebook by reading it and also validating it with nbformat.<summary>Let me verify the notebook by reading it and also validating...</summary>
+
+🛠️ Tool: `code_run`  📥 args:
+````text
+{
+  "script": "
+import json
+with open(\"analysis.ipynb\", encoding=\"utf-8\") as f:
+    nb = json.load(f)
+for i, c in enumerate(nb[\"cells\"]):
+    print(i, c[\"cell_type\"], repr(\"\".join(c.get(\"source\", []))[:80]))
+"
+}
+````
+`````
+[Action] Running python in r3:  import json with open("analysis.ipynb", encoding="utf-8") a...
+[Status] ✅ Exit Code: 0
+[Stdout]
+0 markdown '# Tool Efficiency Notes\nThis notebook contains a small example.'
+1 code 'import statistics\nvalues = [3, 5, 8, 13]\nstatistics.mean(values)\n'
+2 markdown '## Observation\nAtomic tools can still solve many tasks.'
+3 code "summary = {'tools': 7, 'steps': '1-2'}\nsummary\n"
+4 code 'release_snapshot = {\n  "mean_value": statistics.mean(values),\n  "tool_count": su'
+
+`````
+
+**LLM Running (Turn 4) ...**
+
+The new cell is correctly inserted at index 4, after the summary cell. The content is correct. Task done. Output OK.OK
+
